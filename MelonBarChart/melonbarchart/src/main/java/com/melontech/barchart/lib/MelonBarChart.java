@@ -9,6 +9,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MelonBarChart extends LinearLayout {
 
     TextView title;
@@ -43,5 +46,17 @@ public class MelonBarChart extends LinearLayout {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         list.setLayoutManager(layoutManager);
+
+        List<Double> values = new ArrayList<>();
+        values.add(8d);values.add(7d);
+        values.add(0d);values.add(13d);
+        values.add(14d);values.add(18d);
+        values.add(3d);values.add(12d);
+        values.add(15d);values.add(5d);
+
+
+        BarAdapter barAdapter = new BarAdapter(values);
+
+        list.setAdapter(barAdapter);
     }
 }
