@@ -1,13 +1,21 @@
 package com.melontech.barchart.lib;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class MelonBarChart extends LinearLayout {
+
+    TextView title;
+    FrameLayout grid;
+    FrameLayout chart;
+    FrameLayout labels;
+    RecyclerView list;
 
     public MelonBarChart(Context context) {
         super(context);
@@ -26,5 +34,14 @@ public class MelonBarChart extends LinearLayout {
 
     private void init() {
         View root = inflate(getContext(), R.layout.view_bar_chart, this);
+
+        title = (TextView) root.findViewById(R.id.title);
+        grid = (FrameLayout) root.findViewById(R.id.grid);
+        chart = (FrameLayout) root.findViewById(R.id.chart);
+        labels = (FrameLayout) root.findViewById(R.id.labels);
+        list = (RecyclerView) root.findViewById(R.id.list);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        list.setLayoutManager(layoutManager);
     }
 }
