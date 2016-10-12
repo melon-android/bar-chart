@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,17 +48,31 @@ public class MelonBarChart extends LinearLayout {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         list.setLayoutManager(layoutManager);
+    }
 
-        List<Double> values = new ArrayList<>();
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        final List<Double> values = new ArrayList<>();
         values.add(8d);values.add(7d);
         values.add(0d);values.add(13d);
         values.add(14d);values.add(18d);
         values.add(3d);values.add(12d);
         values.add(15d);values.add(5d);
+        values.add(2d);values.add(4d);
+        values.add(6d);values.add(8d);
+
+        values.add(8d);values.add(7d);
+        values.add(0d);values.add(13d);
+        values.add(14d);values.add(18d);
+        values.add(3d);values.add(12d);
+        values.add(15d);values.add(5d);
+        values.add(2d);values.add(4d);
+        values.add(6d);values.add(8d);
 
 
-        BarAdapter barAdapter = new BarAdapter(values);
-
+        BarAdapter barAdapter = new BarAdapter(values, list.getWidth());
+        Log.d("zxc", "width: "+list.getWidth());
         list.setAdapter(barAdapter);
     }
 }
