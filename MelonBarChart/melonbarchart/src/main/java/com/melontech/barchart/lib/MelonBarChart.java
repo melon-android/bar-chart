@@ -46,7 +46,12 @@ public class MelonBarChart extends LinearLayout {
         labels = (FrameLayout) root.findViewById(R.id.labels);
         list = (RecyclerView) root.findViewById(R.id.list);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false){
+            @Override
+            public boolean canScrollHorizontally() {
+                return false;
+            }
+        };
         list.setLayoutManager(layoutManager);
     }
 
