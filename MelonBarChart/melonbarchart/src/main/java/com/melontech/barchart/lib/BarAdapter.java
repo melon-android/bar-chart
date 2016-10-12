@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Created by dpanayotov on 10/11/2016.
- *
  */
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
@@ -21,23 +20,38 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private int width;
     private int barWidth;
-    public BarAdapter(List<Double> values, int width){
+
+    public BarAdapter(List<Double> values, int width) {
+        this(width);
         this.values.addAll(values);
+    }
+
+    public BarAdapter(int width) {
         this.width = width;
         barWidth = width / values.size();
     }
 
+    public void setValues(List<Double> values) {
+        this.values.clear();
+        this.values.addAll(values);
+        notifyDataSetChanged();
+    }
+
     @Override
     public BarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bar, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bar, parent,
+                false);
         return new BarViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(BarViewHolder holder, int position) {
-        holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup.LayoutParams.MATCH_PARENT));
-        holder.positive.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) values.get(position).doubleValue()));
-        holder.negative.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) (20-values.get(position))));
+        holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
+                .LayoutParams.MATCH_PARENT));
+        holder.positive.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
+                .MATCH_PARENT, 0, (float) values.get(position).doubleValue()));
+        holder.negative.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
+                .MATCH_PARENT, 0, (float) (20 - values.get(position))));
     }
 
     @Override
