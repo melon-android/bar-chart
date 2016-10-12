@@ -69,14 +69,13 @@ public class MelonBarChart extends LinearLayout {
 
         values.add(8d);values.add(7d);
         values.add(0d);values.add(13d);
-        values.add(14d);values.add(18d);
-        values.add(3d);values.add(12d);
+        values.add(10d);values.add(7d);
         values.add(15d);values.add(5d);
         values.add(2d);values.add(4d);
         values.add(6d);values.add(8d);
 
 
-        BarAdapter barAdapter = new BarAdapter(values, list.getWidth());
+        BarAdapter barAdapter = new BarAdapter(values, list.getWidth(), 30);
         Log.d("zxc", "width: "+list.getWidth());
         list.setAdapter(barAdapter);
     }

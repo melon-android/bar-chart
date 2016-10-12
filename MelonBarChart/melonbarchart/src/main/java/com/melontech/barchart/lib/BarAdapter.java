@@ -5,6 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -20,21 +23,59 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private int width;
     private int barWidth;
+    private int dataSetSize;
+
+    public BarAdapter(List<Double> values, int width, int dataSetSize) {
+        this.width = width;
+        this.dataSetSize = dataSetSize;
+        if (values != null) {
+            setValues(values);
+
+        }
+    }
+
+    public BarAdapter(int width, int dataSetSize) {
+        this(null, width, dataSetSize);
+    }
 
     public BarAdapter(List<Double> values, int width) {
-        this(width);
-        this.values.addAll(values);
+        this(values, width, 0);
     }
 
     public BarAdapter(int width) {
-        this.width = width;
-        barWidth = width / values.size();
+        this(null, width, 0);
     }
+
 
     public void setValues(List<Double> values) {
         this.values.clear();
         this.values.addAll(values);
+        addZeroPadding();
+        trimDataSize();
+        updateBarWidth();
         notifyDataSetChanged();
+    }
+
+    private void addZeroPadding() {
+        if (dataSetSize > 0) {
+            while (this.values.size() < dataSetSize) {
+                this.values.add(0, 0d);
+            }
+        }
+    }
+
+    private void trimDataSize() {
+        if (dataSetSize > 0) {
+            while (this.values.size() > dataSetSize) {
+                this.values.remove(0);
+            }
+        }
+    }
+
+    private void updateBarWidth() {
+        if (values != null && values.size() > 0) {
+            barWidth = width / values.size();
+        }
     }
 
     @Override
@@ -48,8 +89,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     public void onBindViewHolder(BarViewHolder holder, int position) {
         holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
                 .LayoutParams.MATCH_PARENT));
-        holder.positive.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
-                .MATCH_PARENT, 0, (float) values.get(position).doubleValue()));
+//        holder.positive.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
+//                .MATCH_PARENT, 0, (float) values.get(position).doubleValue()));
+
+        float endWeight = (float) values.get(position).doubleValue();
+        ExpandAnimation ea = new ExpandAnimation(0, endWeight, holder.positive);
+        ea.setDuration(1000);
+        holder.positive.startAnimation(ea);
+
         holder.negative.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
                 .MATCH_PARENT, 0, (float) (20 - values.get(position))));
     }
@@ -70,6 +117,31 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             bar = itemView.findViewById(R.id.bar);
             positive = itemView.findViewById(R.id.positive);
             negative = itemView.findViewById(R.id.negative);
+        }
+    }
+
+    private class ExpandAnimation extends Animation {
+
+        private final float mStartWeight;
+        private final float mDeltaWeight;
+        private View view;
+
+        public ExpandAnimation(float startWeight, float endWeight, View view) {
+            mStartWeight = startWeight;
+            mDeltaWeight = endWeight - startWeight;
+            this.view = view;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
+            lp.weight = (mStartWeight + (mDeltaWeight * interpolatedTime));
+            view.setLayoutParams(lp);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
         }
     }
 }
