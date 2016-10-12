@@ -3,7 +3,8 @@
              android:id="@+id/bar"
              android:layout_width="30dp"
              android:layout_height="match_parent"
-             android:orientation="vertical">
+             android:orientation="vertical"
+    android:padding="1dp">
 
     <View
         android:background="@android:color/holo_red_dark"
@@ -17,7 +18,6 @@
         android:orientation="vertical">
         <View
             android:id="@+id/negative"
-            android:background="@android:color/darker_gray"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
