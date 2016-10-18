@@ -21,19 +21,17 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private List<Double> values = new ArrayList<>();
 
-    private int width;
     private int barWidth;
     private int dataSetSize;
 
     private double min, max;
     private int minPos, maxPos;
 
-    public BarAdapter(List<Double> values, int width, int dataSetSize) {
-        this.width = width;
+    public BarAdapter(List<Double> values, int barwidth, int dataSetSize) {
+        this.barWidth = barwidth;
         this.dataSetSize = dataSetSize;
         if (values != null) {
             setValues(values);
-
         }
     }
 
@@ -55,7 +53,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this.values.addAll(values);
         addZeroPadding();
         trimDataSize();
-        updateBarWidth();
         getMinMax();
         notifyDataSetChanged();
     }
@@ -93,12 +90,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             while (this.values.size() > dataSetSize) {
                 this.values.remove(0);
             }
-        }
-    }
-
-    private void updateBarWidth() {
-        if (values != null && values.size() > 0) {
-            barWidth = width / values.size();
         }
     }
 
