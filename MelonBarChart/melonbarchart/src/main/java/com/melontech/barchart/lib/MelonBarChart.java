@@ -18,6 +18,7 @@ import java.util.List;
 public class MelonBarChart extends LinearLayout {
 
     TextView title;
+    FrameLayout frame;
     FrameLayout grid;
     FrameLayout chart;
     FrameLayout labels;
@@ -44,6 +45,7 @@ public class MelonBarChart extends LinearLayout {
         View root = inflate(getContext(), R.layout.view_bar_chart, this);
 
         title = (TextView) root.findViewById(R.id.title);
+        frame = (FrameLayout) root.findViewById(R.id.frame);
         grid = (FrameLayout) root.findViewById(R.id.grid);
         chart = (FrameLayout) root.findViewById(R.id.chart);
         labels = (FrameLayout) root.findViewById(R.id.labels);
@@ -64,13 +66,13 @@ public class MelonBarChart extends LinearLayout {
 
         Log.d("zxc", "onWindowFocusChanged");
 
-        int initialWidth = chart.getWidth();
+        int initialWidth = frame.getWidth();
         int barWidth = initialWidth / chartWidth;
         int newWidth = chartWidth * barWidth;
         if (initialWidth != newWidth) {
             ViewGroup.LayoutParams layoutParams = list.getLayoutParams();
             layoutParams.width = newWidth;
-            list.setLayoutParams(layoutParams);
+            chart.setLayoutParams(layoutParams);
         }
 
 
