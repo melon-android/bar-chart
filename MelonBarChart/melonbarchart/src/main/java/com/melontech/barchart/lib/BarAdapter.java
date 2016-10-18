@@ -25,6 +25,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     private int barWidth;
     private int dataSetSize;
 
+    private double min, max;
+    private int minPos, maxPos;
+
     public BarAdapter(List<Double> values, int width, int dataSetSize) {
         this.width = width;
         this.dataSetSize = dataSetSize;
@@ -53,7 +56,28 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         addZeroPadding();
         trimDataSize();
         updateBarWidth();
+        getMinMax();
         notifyDataSetChanged();
+    }
+
+    private void getMinMax() {
+        min = Double.MAX_VALUE;
+        max = Double.MIN_VALUE;
+        minPos = -1;
+        maxPos = -1;
+
+        double val;
+        for (int i = 0; i < values.size(); i++) {
+            val = values.get(i);
+            if (val > 0 && val < min) {
+                min = val;
+                minPos = i;
+            }
+            if (val > max) {
+                max = val;
+                maxPos = i;
+            }
+        }
     }
 
     private void addZeroPadding() {
@@ -89,10 +113,15 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     public void onBindViewHolder(BarViewHolder holder, int position) {
         holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
                 .LayoutParams.MATCH_PARENT));
-//        holder.positive.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
-//                .MATCH_PARENT, 0, (float) values.get(position).doubleValue()));
+
+        if(position == minPos || position == maxPos){
+            holder.positive.setBackgroundResource(R.drawable.min_max_bar);
+        }else{
+            holder.positive.setBackgroundResource(R.drawable.normal_bar);
+        }
 
         float endWeight = (float) values.get(position).doubleValue();
+
         ExpandAnimation ea = new ExpandAnimation(0, endWeight, holder.positive);
         ea.setDuration(1000);
         holder.positive.startAnimation(ea);
