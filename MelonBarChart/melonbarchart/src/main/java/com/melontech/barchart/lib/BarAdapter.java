@@ -165,14 +165,20 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             holder.positive.setBackgroundResource(R.drawable.normal_bar);
         }
 
-        double resolvedValue = Math.min(absoluteScaleMax, values.get(position).doubleValue());
+        double resolvedPositiveValue = Math.min(absoluteScaleMax, values.get(position).doubleValue());
+        double resolvedNegativeValue = currentScaleMax - resolvedPositiveValue;
 
-        ExpandAnimation ea = new ExpandAnimation(0, (float) resolvedValue, holder.positive);
-        ea.setDuration(1000);
-        holder.positive.startAnimation(ea);
 
-        holder.negative.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
-                .MATCH_PARENT, 0, (float) (currentScaleMax - resolvedValue)));
+        ExpandAnimation eap = new ExpandAnimation(0, (float) resolvedPositiveValue, holder.positive);
+        eap.setDuration(1000);
+        holder.positive.startAnimation(eap);
+
+        ExpandAnimation ean = new ExpandAnimation((float) currentScaleMax, (float) resolvedNegativeValue, holder.negative);
+        ean.setDuration(1000);
+        holder.negative.startAnimation(ean);
+
+
+
     }
 
     @Override
