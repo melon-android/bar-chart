@@ -3,7 +3,8 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="24dp">
+              android:padding="24dp"
+              android:background="#0085b8">
 
     <TextView
         android:id="@+id/title"
@@ -24,12 +25,13 @@
             android:layout_height="match_parent"
             android:layout_gravity="center">
 
-            <FrameLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:id="@+id/grid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+            </LinearLayout>
 
-            </FrameLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list"

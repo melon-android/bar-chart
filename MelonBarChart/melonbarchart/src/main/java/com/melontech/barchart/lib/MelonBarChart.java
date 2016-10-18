@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,7 +24,7 @@ public class MelonBarChart extends LinearLayout {
 
     TextView title;
     FrameLayout frame;
-    FrameLayout grid;
+    LinearLayout grid;
     FrameLayout chart;
     FrameLayout labels;
     RecyclerView list;
@@ -50,7 +51,7 @@ public class MelonBarChart extends LinearLayout {
 
         title = (TextView) root.findViewById(R.id.title);
         frame = (FrameLayout) root.findViewById(R.id.frame);
-        grid = (FrameLayout) root.findViewById(R.id.grid);
+        grid = (LinearLayout) root.findViewById(R.id.grid);
         chart = (FrameLayout) root.findViewById(R.id.chart);
         labels = (FrameLayout) root.findViewById(R.id.labels);
         list = (RecyclerView) root.findViewById(R.id.list);
@@ -120,6 +121,23 @@ public class MelonBarChart extends LinearLayout {
         barAdapter.setValues(values);
         list.setAdapter(barAdapter);
 
+        int height = frame.getHeight();
+
         int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP) - 1;
+        View view;
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        view = inflater.inflate(R.layout.view_grid_line_empty, null, false);
+        addGridLine(view);
+        for(int i=0;i<gridLineCount;i++){
+            view = inflater.inflate(R.layout.view_grid_line, grid, false);
+            addGridLine(view);
+        }
+
+    }
+
+    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
+    private void addGridLine(View view){
+        view.setLayoutParams(layoutParams);
+        grid.addView(view);
     }
 }
