@@ -17,6 +17,10 @@ import java.util.List;
 
 public class MelonBarChart extends LinearLayout {
 
+    private static final double DEFAULT_SCALE_STEP = 2f;
+    private static final double DEFAULT_ABSOLUTE_SCALE_MAX = 24f;
+    private static final double DEFAULT_DEFAULT_SCALE_MAX = 12f;
+
     TextView title;
     FrameLayout frame;
     FrameLayout grid;
@@ -110,10 +114,12 @@ public class MelonBarChart extends LinearLayout {
 
         BarAdapter barAdapter = new BarAdapter(barWidth, chartWidth);
         Log.d("zxc", "width: " + list.getWidth());
-        barAdapter.setScaleStep(2f);
-        barAdapter.setAbsoluteScaleMax(24f);
-        barAdapter.setDefaultScaleMax(12f);
+        barAdapter.setScaleStep(DEFAULT_SCALE_STEP);
+        barAdapter.setAbsoluteScaleMax(DEFAULT_ABSOLUTE_SCALE_MAX);
+        barAdapter.setDefaultScaleMax(DEFAULT_DEFAULT_SCALE_MAX);
         barAdapter.setValues(values);
         list.setAdapter(barAdapter);
+
+        int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP) - 1;
     }
 }

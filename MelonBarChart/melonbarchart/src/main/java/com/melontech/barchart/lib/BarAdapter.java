@@ -58,6 +58,10 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this(null, width, 0);
     }
 
+    public double getCurrentScaleMax() {
+        return currentScaleMax;
+    }
+
     public double getDefaultScaleMax() {
         return defaultScaleMax;
     }
