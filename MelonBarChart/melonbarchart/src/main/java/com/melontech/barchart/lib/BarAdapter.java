@@ -2,6 +2,7 @@ package com.melontech.barchart.lib;
 
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import java.util.List;
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
+    private static final double DEFAULT_SCALE_PADDING = 0.2;
+
     private List<Double> values = new ArrayList<>();
 
     private int barWidth;
@@ -27,9 +30,17 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     private double min, max;
     private int minPos, maxPos;
 
+    private double defaultScaleMax = 0f;
+    private double absoluteScaleMax = 0f;
+    private double scaleStep = 0f;
+    private double scaleMedian = 0f;
+
+    private double currentScaleMax = 0f;
+
     public BarAdapter(List<Double> values, int barwidth, int dataSetSize) {
         this.barWidth = barwidth;
         this.dataSetSize = dataSetSize;
+
         if (values != null) {
             setValues(values);
         }
@@ -47,6 +58,37 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this(null, width, 0);
     }
 
+    public double getDefaultScaleMax() {
+        return defaultScaleMax;
+    }
+
+    public void setDefaultScaleMax(double defaultScaleMax) {
+        this.defaultScaleMax = defaultScaleMax;
+    }
+
+    public double getAbsoluteScaleMax() {
+        return absoluteScaleMax;
+    }
+
+    public void setAbsoluteScaleMax(double absoluteScaleMax) {
+        this.absoluteScaleMax = absoluteScaleMax;
+    }
+
+    public double getScaleStep() {
+        return scaleStep;
+    }
+
+    public void setScaleStep(double scaleStep) {
+        this.scaleStep = scaleStep;
+    }
+
+    public double getScaleMedian() {
+        return scaleMedian;
+    }
+
+    public void setScaleMedian(double scaleMedian) {
+        this.scaleMedian = scaleMedian;
+    }
 
     public void setValues(List<Double> values) {
         this.values.clear();
@@ -54,7 +96,19 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         addZeroPadding();
         trimDataSize();
         getMinMax();
+        calculateScale();
         notifyDataSetChanged();
+    }
+
+    private void calculateScale() {
+        currentScaleMax = scaleStep != 0 ? ceil(max, scaleStep) : max * (1 + DEFAULT_SCALE_PADDING);
+        if (absoluteScaleMax != 0 && currentScaleMax > absoluteScaleMax) {
+            currentScaleMax = absoluteScaleMax;
+        }
+        if (defaultScaleMax != 0 && currentScaleMax < defaultScaleMax) {
+            currentScaleMax = defaultScaleMax;
+        }
+        Log.d("zxc", "currentScaleMax: "+currentScaleMax);
     }
 
     private void getMinMax() {
@@ -105,20 +159,20 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
                 .LayoutParams.MATCH_PARENT));
 
-        if(position == minPos || position == maxPos){
+        if (position == minPos || position == maxPos) {
             holder.positive.setBackgroundResource(R.drawable.min_max_bar);
-        }else{
+        } else {
             holder.positive.setBackgroundResource(R.drawable.normal_bar);
         }
 
-        float endWeight = (float) values.get(position).doubleValue();
+        double resolvedValue = Math.min(absoluteScaleMax, values.get(position).doubleValue());
 
-        ExpandAnimation ea = new ExpandAnimation(0, endWeight, holder.positive);
+        ExpandAnimation ea = new ExpandAnimation(0, (float) resolvedValue, holder.positive);
         ea.setDuration(1000);
         holder.positive.startAnimation(ea);
 
         holder.negative.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams
-                .MATCH_PARENT, 0, (float) (20 - values.get(position))));
+                .MATCH_PARENT, 0, (float) (currentScaleMax - resolvedValue)));
     }
 
     @Override
@@ -163,5 +217,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         public boolean willChangeBounds() {
             return true;
         }
+    }
+
+    private static double ceil(double input, double step) {
+        return Math.ceil(input / step) * step;
     }
 }

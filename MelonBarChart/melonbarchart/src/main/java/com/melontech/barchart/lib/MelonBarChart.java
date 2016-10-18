@@ -72,9 +72,6 @@ public class MelonBarChart extends LinearLayout {
             layoutParams.width = newWidth;
             list.setLayoutParams(layoutParams);
         }
-        Log.d("zxc", "initial: "+initialWidth);
-        Log.d("zxc", "new: "+newWidth);
-        Log.d("zxc", "bar: "+barWidth);
 
 
         super.onWindowFocusChanged(hasWindowFocus);
@@ -98,6 +95,7 @@ public class MelonBarChart extends LinearLayout {
         values.add(7d);
         values.add(0d);
         values.add(13d);
+        values.add(30d);
         values.add(10d);
         values.add(7d);
         values.add(15d);
@@ -108,8 +106,12 @@ public class MelonBarChart extends LinearLayout {
         values.add(8d);
 
 
-        BarAdapter barAdapter = new BarAdapter(values, barWidth, chartWidth);
+        BarAdapter barAdapter = new BarAdapter(barWidth, chartWidth);
         Log.d("zxc", "width: " + list.getWidth());
+        barAdapter.setScaleStep(2f);
+        barAdapter.setAbsoluteScaleMax(24f);
+        barAdapter.setDefaultScaleMax(12f);
+        barAdapter.setValues(values);
         list.setAdapter(barAdapter);
     }
 }
