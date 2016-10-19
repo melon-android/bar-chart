@@ -22,6 +22,7 @@ public class MelonBarChart extends LinearLayout {
     private static final double DEFAULT_ABSOLUTE_SCALE_MAX = 24f;
     private static final double DEFAULT_DEFAULT_SCALE_MAX = 12f;
     private static final int DEFAULT_BASELINE = 4;
+    private static final int DEFAULT_CHART_WIDTH = 30;
 
     TextView title;
     FrameLayout frame;
@@ -30,7 +31,7 @@ public class MelonBarChart extends LinearLayout {
     FrameLayout labels;
     RecyclerView list;
 
-    private int chartWidth = 30;
+    private int chartWidth = DEFAULT_CHART_WIDTH;
     private int baseline = DEFAULT_BASELINE;
 
     public MelonBarChart(Context context) {
@@ -70,8 +71,12 @@ public class MelonBarChart extends LinearLayout {
 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
-
+        super.onWindowFocusChanged(hasWindowFocus);
         Log.d("zxc", "onWindowFocusChanged");
+        initializeChart();
+    }
+
+    private void initializeChart() {
 
         int initialWidth = frame.getWidth();
         int barWidth = initialWidth / chartWidth;
@@ -82,8 +87,51 @@ public class MelonBarChart extends LinearLayout {
             chart.setLayoutParams(layoutParams);
         }
 
+        BarAdapter barAdapter = new BarAdapter(barWidth, chartWidth);
 
-        super.onWindowFocusChanged(hasWindowFocus);
+        barAdapter.setScaleStep(DEFAULT_SCALE_STEP);
+        barAdapter.setAbsoluteScaleMax(DEFAULT_ABSOLUTE_SCALE_MAX);
+        barAdapter.setDefaultScaleMax(DEFAULT_DEFAULT_SCALE_MAX);
+
+        fillFakeData(barAdapter);
+
+        list.setAdapter(barAdapter);
+
+        constructBackgroundGrid(barAdapter.getCurrentScaleMax());
+    }
+
+    private void constructBackgroundGrid(double scaleMax) {
+        int gridLineCount = (int) (scaleMax / DEFAULT_SCALE_STEP);
+        View view, subview;
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE);
+
+        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
+                .LayoutParams.MATCH_PARENT, 0, 1);
+        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
+                .MATCH_PARENT, 1);
+        baselineParams.setMargins(dpToPx(2), 0, dpToPx(1), 0);
+
+        for (int i = gridLineCount - 1; i >= 0; i--) {
+            if (i == baseline) {
+                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
+                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
+                for (int j = 0; j < chartWidth; j++) {
+                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
+                    subview.setLayoutParams(baselineParams);
+                    innerFrame.addView(subview);
+                    Log.d("zxc", "j:" + j);
+                }
+
+            } else {
+                view = inflater.inflate(R.layout.view_grid_line, grid, false);
+            }
+            view.setLayoutParams(horizontalParams);
+            grid.addView(view);
+        }
+    }
+
+    private void fillFakeData(BarAdapter barAdapter) {
         final List<Double> values = new ArrayList<>();
 
         values.add(8d);
@@ -113,46 +161,7 @@ public class MelonBarChart extends LinearLayout {
         values.add(4d);
         values.add(6d);
         values.add(8d);
-
-
-        BarAdapter barAdapter = new BarAdapter(barWidth, chartWidth);
-        barAdapter.setScaleStep(DEFAULT_SCALE_STEP);
-        barAdapter.setAbsoluteScaleMax(DEFAULT_ABSOLUTE_SCALE_MAX);
-        barAdapter.setDefaultScaleMax(DEFAULT_DEFAULT_SCALE_MAX);
         barAdapter.setValues(values);
-        list.setAdapter(barAdapter);
-
-        int height = frame.getHeight();
-
-        int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP);
-        View view, subview;
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
-                .LAYOUT_INFLATER_SERVICE);
-
-        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
-                .LayoutParams.MATCH_PARENT, 0, 1);
-        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
-                .MATCH_PARENT, 1);
-        baselineParams.setMargins(dpToPx(2),0,dpToPx(1),0);
-
-        for (int i = gridLineCount - 1; i >= 0; i--) {
-            if (i == baseline) {
-                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
-                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
-                for (int j = 0; j < chartWidth; j++) {
-                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
-                    subview.setLayoutParams(baselineParams);
-                    innerFrame.addView(subview);
-                    Log.d("zxc", "j:" + j);
-                }
-
-            } else {
-                view = inflater.inflate(R.layout.view_grid_line, grid, false);
-            }
-            view.setLayoutParams(horizontalParams);
-            grid.addView(view);
-        }
-
     }
 
     public int dpToPx(int dp) {
