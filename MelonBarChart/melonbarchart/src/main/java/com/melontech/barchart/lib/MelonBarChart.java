@@ -20,6 +20,7 @@ public class MelonBarChart extends LinearLayout {
     private static final double DEFAULT_SCALE_STEP = 2f;
     private static final double DEFAULT_ABSOLUTE_SCALE_MAX = 24f;
     private static final double DEFAULT_DEFAULT_SCALE_MAX = 12f;
+    private static final int DEFAULT_BASELINE = 4;
 
     TextView title;
     FrameLayout frame;
@@ -29,6 +30,7 @@ public class MelonBarChart extends LinearLayout {
     RecyclerView list;
 
     private int chartWidth = 30;
+    private int baseline = DEFAULT_BASELINE;
 
     public MelonBarChart(Context context) {
         super(context);
@@ -121,24 +123,35 @@ public class MelonBarChart extends LinearLayout {
 
         int height = frame.getHeight();
 
-        int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP) - 1;
-        View view;
+        int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP);
+        View view, subview;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.view_grid_line_empty, null, false);
-        addGridLine(view);
+
+        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
+                .LayoutParams.MATCH_PARENT, 0, 1);
+        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
+                .MATCH_PARENT, 1);
+        baselineParams.setMargins(2,0,2,0);
+
         for (int i = 0; i < gridLineCount; i++) {
-            view = inflater.inflate(R.layout.view_grid_line, grid, false);
-            addGridLine(view);
+            if (i == baseline) {
+                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
+                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
+                for (int j = 0; j < chartWidth; j++) {
+                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
+                    subview.setLayoutParams(baselineParams);
+                    innerFrame.addView(subview);
+                    Log.d("zxc", "j:" + j);
+                }
+
+            } else {
+                view = inflater.inflate(R.layout.view_grid_line, grid, false);
+            }
+            view.setLayoutParams(horizontalParams);
+            grid.addView(view);
         }
 
     }
 
-    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout
-            .LayoutParams.MATCH_PARENT, 0, 1);
-
-    private void addGridLine(View view) {
-        view.setLayoutParams(layoutParams);
-        grid.addView(view);
-    }
 }
