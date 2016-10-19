@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -112,7 +111,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         if (defaultScaleMax != 0 && currentScaleMax < defaultScaleMax) {
             currentScaleMax = defaultScaleMax;
         }
-        Log.d("zxc", "currentScaleMax: "+currentScaleMax);
+        Log.d("zxc", "currentScaleMax: " + currentScaleMax);
     }
 
     private void getMinMax() {
@@ -169,18 +168,20 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             holder.positive.setBackgroundResource(R.drawable.normal_bar);
         }
 
-        double resolvedPositiveValue = Math.min(absoluteScaleMax, values.get(position).doubleValue());
+        double resolvedPositiveValue = Math.min(absoluteScaleMax, values.get(position)
+                .doubleValue());
         double resolvedNegativeValue = currentScaleMax - resolvedPositiveValue;
 
 
-        ExpandAnimation eap = new ExpandAnimation(0, (float) resolvedPositiveValue, holder.positive);
+        ExpandAnimation eap = new ExpandAnimation(0, (float) resolvedPositiveValue, holder
+                .positive);
         eap.setDuration(1000);
         holder.positive.startAnimation(eap);
 
-        ExpandAnimation ean = new ExpandAnimation((float) currentScaleMax, (float) resolvedNegativeValue, holder.negative);
+        ExpandAnimation ean = new ExpandAnimation((float) currentScaleMax, (float)
+                resolvedNegativeValue, holder.negative);
         ean.setDuration(1000);
         holder.negative.startAnimation(ean);
-
 
 
     }

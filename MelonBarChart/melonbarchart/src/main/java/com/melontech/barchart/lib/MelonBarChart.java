@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -114,7 +113,6 @@ public class MelonBarChart extends LinearLayout {
 
 
         BarAdapter barAdapter = new BarAdapter(barWidth, chartWidth);
-        Log.d("zxc", "width: " + list.getWidth());
         barAdapter.setScaleStep(DEFAULT_SCALE_STEP);
         barAdapter.setAbsoluteScaleMax(DEFAULT_ABSOLUTE_SCALE_MAX);
         barAdapter.setDefaultScaleMax(DEFAULT_DEFAULT_SCALE_MAX);
@@ -125,18 +123,21 @@ public class MelonBarChart extends LinearLayout {
 
         int gridLineCount = (int) (barAdapter.getCurrentScaleMax() / DEFAULT_SCALE_STEP) - 1;
         View view;
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.view_grid_line_empty, null, false);
         addGridLine(view);
-        for(int i=0;i<gridLineCount;i++){
+        for (int i = 0; i < gridLineCount; i++) {
             view = inflater.inflate(R.layout.view_grid_line, grid, false);
             addGridLine(view);
         }
 
     }
 
-    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
-    private void addGridLine(View view){
+    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout
+            .LayoutParams.MATCH_PARENT, 0, 1);
+
+    private void addGridLine(View view) {
         view.setLayoutParams(layoutParams);
         grid.addView(view);
     }

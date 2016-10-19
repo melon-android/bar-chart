@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="#0085b8"
               android:orientation="vertical"
-              android:padding="24dp"
-              android:background="#0085b8">
+              android:padding="24dp">
 
     <TextView
         android:id="@+id/title"
@@ -19,17 +19,17 @@
         android:layout_height="120dp">
 
         <FrameLayout
-            android:background="@drawable/layout_border"
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:background="@drawable/layout_border">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/grid"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
             </LinearLayout>
 
 
