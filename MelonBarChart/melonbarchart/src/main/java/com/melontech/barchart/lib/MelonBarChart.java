@@ -14,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MelonBarChart extends LinearLayout {
 
@@ -78,6 +80,8 @@ public class MelonBarChart extends LinearLayout {
 
     private void initializeChart() {
 
+        Set<Integer> dashedLines = fillFakeDashedLinesSet();
+
         int initialWidth = frame.getWidth();
         int barWidth = initialWidth / chartWidth;
         int newWidth = chartWidth * barWidth;
@@ -97,10 +101,10 @@ public class MelonBarChart extends LinearLayout {
 
         list.setAdapter(barAdapter);
 
-        constructBackgroundGrid(barAdapter.getCurrentScaleMax());
+        constructBackgroundGrid(barAdapter.getCurrentScaleMax(), dashedLines);
     }
 
-    private void constructBackgroundGrid(double scaleMax) {
+    private void constructBackgroundGrid(double scaleMax, Set<Integer> dashedLines) {
         int gridLineCount = (int) (scaleMax / DEFAULT_SCALE_STEP);
         View view, subview;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
@@ -113,14 +117,13 @@ public class MelonBarChart extends LinearLayout {
         baselineParams.setMargins(dpToPx(2), 0, dpToPx(1), 0);
 
         for (int i = gridLineCount - 1; i >= 0; i--) {
-            if (i == baseline) {
+            if (dashedLines.contains(i)) {
                 view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
                 LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
                 for (int j = 0; j < chartWidth; j++) {
                     subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
                     subview.setLayoutParams(baselineParams);
                     innerFrame.addView(subview);
-                    Log.d("zxc", "j:" + j);
                 }
 
             } else {
@@ -129,6 +132,14 @@ public class MelonBarChart extends LinearLayout {
             view.setLayoutParams(horizontalParams);
             grid.addView(view);
         }
+    }
+
+    private Set<Integer> fillFakeDashedLinesSet() {
+        Set<Integer> dashedLines = new HashSet<>();
+        dashedLines.add(3);
+        dashedLines.add(7);
+
+        return dashedLines;
     }
 
     private void fillFakeData(BarAdapter barAdapter) {
