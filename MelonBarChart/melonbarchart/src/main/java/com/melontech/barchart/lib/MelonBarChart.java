@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +77,7 @@ public class MelonBarChart extends LinearLayout {
         int barWidth = initialWidth / chartWidth;
         int newWidth = chartWidth * barWidth;
         if (initialWidth != newWidth) {
-            ViewGroup.LayoutParams layoutParams = list.getLayoutParams();
+            ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
             layoutParams.width = newWidth;
             chart.setLayoutParams(layoutParams);
         }
@@ -132,7 +133,7 @@ public class MelonBarChart extends LinearLayout {
                 .LayoutParams.MATCH_PARENT, 0, 1);
         LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
                 .MATCH_PARENT, 1);
-        baselineParams.setMargins(2,0,2,0);
+        baselineParams.setMargins(dpToPx(2),0,dpToPx(1),0);
 
         for (int i = 0; i < gridLineCount; i++) {
             if (i == baseline) {
@@ -152,6 +153,12 @@ public class MelonBarChart extends LinearLayout {
             grid.addView(view);
         }
 
+    }
+
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
 }
