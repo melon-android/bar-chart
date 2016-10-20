@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +112,18 @@ public class MelonBarChart extends LinearLayout {
         calculateScale();
 
         BarAdapter barAdapter = new BarAdapter(barWidth, currentScaleMax);
+
+        barAdapter.setAnimationListener(new BarAdapter.AnimationListener() {
+            @Override
+            public void onAnimationStaring() {
+                Log.d("zxc", "onAnimationStaring");
+            }
+
+            @Override
+            public void onAminationComplete() {
+                Log.d("zxc", "onAminationComplete");
+            }
+        });
 
         barAdapter.setValues(values);
 

@@ -1,5 +1,6 @@
 package com.melontech.barchart.lib;
 
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,19 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private Set<Integer> highlightedBars = new HashSet<>();
 
+    private AnimationListener animationListener;
+
+    private Handler handler = new Handler();
+
+    private Runnable notifyAnimationCompleted = new Runnable() {
+        @Override
+        public void run() {
+            if (animationListener != null) {
+                animationListener.onAminationComplete();
+            }
+        }
+    };
+
     public BarAdapter(List<Double> values, int barwidth, double scaleMax) {
         this.barWidth = barwidth;
         this.scaleMax = scaleMax;
@@ -39,6 +53,17 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         if (values != null) {
             setValues(values);
         }
+
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (animationListener != null) {
+                    animationListener.onAnimationStaring();
+                }
+                handler.removeCallbacks(notifyAnimationCompleted);
+                handler.postDelayed(notifyAnimationCompleted, animationDuration);
+            }
+        });
     }
 
     public BarAdapter(int barwidth, double scaleMax) {
@@ -61,6 +86,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void setAnimationListener(AnimationListener animationListener) {
+        this.animationListener = animationListener;
+    }
 
     @Override
     public BarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -134,6 +162,12 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         public boolean willChangeBounds() {
             return true;
         }
+    }
+
+    public static interface AnimationListener {
+        void onAnimationStaring();
+
+        void onAminationComplete();
     }
 
 }
