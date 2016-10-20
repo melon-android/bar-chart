@@ -73,15 +73,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
 
 
-        ExpandAnimation eap = new ExpandAnimation(0, (float) resolvedPositiveValue, holder
-                .positive);
-        eap.setDuration(1000);
-        holder.positive.startAnimation(eap);
+        animateWeight(0, (float) resolvedPositiveValue, holder.positive, 1000);
+        animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative, 1000);
+    }
 
-        ExpandAnimation ean = new ExpandAnimation((float) scaleMax, (float)
-                resolvedNegativeValue, holder.negative);
-        ean.setDuration(1000);
-        holder.negative.startAnimation(ean);
+    private void animateWeight(float startWeight, float endWeight, View view, long duration) {
+        ExpandAnimation ea = new ExpandAnimation(startWeight, endWeight, view);
+        ea.setDuration(duration);
+        view.startAnimation(ea);
     }
 
     @Override
