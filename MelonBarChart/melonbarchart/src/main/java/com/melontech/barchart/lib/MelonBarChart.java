@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +40,15 @@ public class MelonBarChart extends LinearLayout {
     private double absoluteScaleMax;
     private double defaultScaleMax;
     private double currentScaleMax;
+    private int barWidth;
 
     private double min, max;
     private int minPos, maxPos;
 
     private List<Double> values;
+    Set<Integer> highlightedBars = new HashSet<>();
+    Set<Integer> labeledBars = new HashSet<>();
+
 
     public MelonBarChart(Context context) {
         super(context);
@@ -95,7 +98,7 @@ public class MelonBarChart extends LinearLayout {
         Set<Integer> dashedLines = fillFakeDashedLinesSet();
 
         int initialWidth = frame.getWidth();
-        int barWidth = initialWidth / chartWidth;
+        barWidth = initialWidth / chartWidth;
         int newWidth = chartWidth * barWidth;
         if (initialWidth != newWidth) {
             ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
@@ -116,26 +119,34 @@ public class MelonBarChart extends LinearLayout {
         barAdapter.setAnimationListener(new BarAdapter.AnimationListener() {
             @Override
             public void onAnimationStaring() {
-                Log.d("zxc", "onAnimationStaring");
+                clearLabels();
             }
 
             @Override
             public void onAminationComplete() {
-                Log.d("zxc", "onAminationComplete");
+                constructLabels();
             }
         });
 
         barAdapter.setValues(values);
 
-        Set<Integer> highlightedBars = new HashSet<>();
         highlightedBars.add(minPos);
         highlightedBars.add(maxPos);
+
+        labeledBars.add(minPos);
+        labeledBars.add(maxPos);
 
         barAdapter.setHighlightedBars(highlightedBars);
 
         list.setAdapter(barAdapter);
 
         constructBackgroundGrid();
+
+        constructLabels();
+    }
+
+    private void fillHighlightedBars() {
+
     }
 
     private void constructBackgroundGrid() {
@@ -168,6 +179,28 @@ public class MelonBarChart extends LinearLayout {
             view.setLayoutParams(horizontalParams);
             grid.addView(view);
         }
+    }
+
+    private void constructLabels() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE);
+        TextView textView;
+        for (int position : labeledBars) {
+            textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
+            textView.setText(values.get(position).toString() + "h");
+            textView.measure(0, 0);
+            int textViewWidth = textView.getMeasuredWidth();
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
+                    .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(position * barWidth + dpToPx(1) + Math.round(barWidth / 2f) -
+                    Math.round(textViewWidth / 2f), 0, 0, 0);
+            textView.setLayoutParams(layoutParams);
+            labels.addView(textView);
+        }
+    }
+
+    private void clearLabels() {
+        labels.removeAllViews();
     }
 
     private void getMinMax() {
