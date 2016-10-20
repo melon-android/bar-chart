@@ -20,6 +20,10 @@ import java.util.Set;
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
+    private static final long DEFAULT_ANIMTION_DURATION = 1000;
+
+    private long animationDuration = DEFAULT_ANIMTION_DURATION;
+
     private List<Double> values = new ArrayList<>();
 
     private int barWidth;
@@ -39,6 +43,10 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     public BarAdapter(int barwidth, double scaleMax) {
         this(null, barwidth, scaleMax);
+    }
+
+    public void setAnimationDuration(long animationDuration) {
+        this.animationDuration = animationDuration;
     }
 
     public void setValues(List<Double> values) {
@@ -73,8 +81,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
 
 
-        animateWeight(0, (float) resolvedPositiveValue, holder.positive, 1000);
-        animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative, 1000);
+        animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
+        animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
+                animationDuration);
     }
 
     private void animateWeight(float startWeight, float endWeight, View view, long duration) {
