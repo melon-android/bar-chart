@@ -150,6 +150,8 @@ public class MelonBarChart extends LinearLayout {
                 .MATCH_PARENT, 1);
         baselineParams.setMargins(dpToPx(2), 0, dpToPx(1), 0);
 
+        grid.removeAllViews();
+
         for (int i = gridLineCount - 1; i >= 0; i--) {
             if (dashedLines.contains(i)) {
                 view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
