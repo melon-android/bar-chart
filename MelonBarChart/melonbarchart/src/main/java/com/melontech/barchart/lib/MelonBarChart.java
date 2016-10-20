@@ -142,11 +142,6 @@ public class MelonBarChart extends LinearLayout {
 
         constructBackgroundGrid();
 
-        constructLabels();
-    }
-
-    private void fillHighlightedBars() {
-
     }
 
     private void constructBackgroundGrid() {
