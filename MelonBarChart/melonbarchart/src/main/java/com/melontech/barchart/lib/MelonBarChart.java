@@ -28,7 +28,6 @@ public class MelonBarChart extends LinearLayout {
 
 
     TextView title;
-    FrameLayout frame;
     LinearLayout grid;
     FrameLayout chart;
     FrameLayout labels;
@@ -49,6 +48,7 @@ public class MelonBarChart extends LinearLayout {
     Set<Integer> highlightedBars = new HashSet<>();
     Set<Integer> labeledBars = new HashSet<>();
 
+    BarAdapter adapter;
 
     public MelonBarChart(Context context) {
         super(context);
@@ -69,7 +69,6 @@ public class MelonBarChart extends LinearLayout {
         View root = inflate(getContext(), R.layout.view_bar_chart, this);
 
         title = (TextView) root.findViewById(R.id.title);
-        frame = (FrameLayout) root.findViewById(R.id.frame);
         grid = (LinearLayout) root.findViewById(R.id.grid);
         chart = (FrameLayout) root.findViewById(R.id.chart);
         labels = (FrameLayout) root.findViewById(R.id.labels);
@@ -97,7 +96,7 @@ public class MelonBarChart extends LinearLayout {
 
         Set<Integer> dashedLines = fillFakeDashedLinesSet();
 
-        int initialWidth = frame.getWidth();
+        int initialWidth = chart.getWidth();
         barWidth = initialWidth / chartWidth;
         int newWidth = chartWidth * barWidth;
         if (initialWidth != newWidth) {
@@ -114,9 +113,9 @@ public class MelonBarChart extends LinearLayout {
         getMinMax();
         calculateScale();
 
-        BarAdapter barAdapter = new BarAdapter(barWidth, currentScaleMax);
+        adapter = new BarAdapter(barWidth, currentScaleMax);
 
-        barAdapter.setAnimationListener(new BarAdapter.AnimationListener() {
+        adapter.setAnimationListener(new BarAdapter.AnimationListener() {
             @Override
             public void onAnimationStaring() {
                 clearLabels();
@@ -128,7 +127,7 @@ public class MelonBarChart extends LinearLayout {
             }
         });
 
-        barAdapter.setValues(values);
+        adapter.setValues(values);
 
         highlightedBars.add(minPos);
         highlightedBars.add(maxPos);
@@ -136,9 +135,9 @@ public class MelonBarChart extends LinearLayout {
         labeledBars.add(minPos);
         labeledBars.add(maxPos);
 
-        barAdapter.setHighlightedBars(highlightedBars);
+        adapter.setHighlightedBars(highlightedBars);
 
-        list.setAdapter(barAdapter);
+        list.setAdapter(adapter);
 
         constructBackgroundGrid();
 
@@ -188,7 +187,8 @@ public class MelonBarChart extends LinearLayout {
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(1) + Math.round(barWidth / 2f) -
-                    Math.round(textViewWidth / 2f), 0, 0, 0);
+                    Math.round(textViewWidth / 2f), chart.getMeasuredHeight() - adapter
+                    .getBarHeight(position) + dpToPx(12), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }

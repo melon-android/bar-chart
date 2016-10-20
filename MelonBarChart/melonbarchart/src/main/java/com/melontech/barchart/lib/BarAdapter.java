@@ -11,8 +11,10 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,6 +39,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private Handler handler = new Handler();
 
+    private Map<Integer, Integer> barHeights = new HashMap();
+
     private Runnable notifyAnimationCompleted = new Runnable() {
         @Override
         public void run() {
@@ -57,6 +61,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+
+                barHeights.clear();
+
                 if (animationListener != null) {
                     animationListener.onAnimationStaring();
                 }
@@ -90,6 +97,10 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this.animationListener = animationListener;
     }
 
+    public int getBarHeight(int position) {
+        return barHeights.get(position);
+    }
+
     @Override
     public BarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bar, parent,
@@ -98,7 +109,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(BarViewHolder holder, int position) {
+    public void onBindViewHolder(final BarViewHolder holder, final int position) {
         holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
                 .LayoutParams.MATCH_PARENT));
 
@@ -111,13 +122,30 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
         animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
         animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
-                animationDuration);
+                animationDuration).setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                barHeights.put(position, holder.positive.getMeasuredHeight());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
-    private void animateWeight(float startWeight, float endWeight, View view, long duration) {
+    private ExpandAnimation animateWeight(float startWeight, float endWeight, View view, long
+            duration) {
         ExpandAnimation ea = new ExpandAnimation(startWeight, endWeight, view);
         ea.setDuration(duration);
         view.startAnimation(ea);
+        return ea;
     }
 
     @Override
