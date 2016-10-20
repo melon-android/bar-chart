@@ -2,7 +2,6 @@ package com.melontech.barchart.lib;
 
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,12 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Created by dpanayotov on 10/11/2016.
+ * Created by dpanayotov on 10/11/2016
  */
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
@@ -26,7 +26,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private double scaleMax = 0f;
 
-    private Set<Integer> highlightedBars;
+    private Set<Integer> highlightedBars = new HashSet<>();
 
     public BarAdapter(List<Double> values, int barwidth, double scaleMax) {
         this.barWidth = barwidth;
@@ -41,14 +41,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this(null, barwidth, scaleMax);
     }
 
-    public BarAdapter(List<Double> values, int barwidth) {
-        this(values, barwidth, 0);
-    }
-
-    public BarAdapter(int barwidth) {
-        this(null, barwidth, 0);
-    }
-
     public void setValues(List<Double> values) {
         this.values.clear();
         this.values.addAll(values);
@@ -56,7 +48,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     public void setHighlightedBars(Set<Integer> highlightedBars) {
-        this.highlightedBars = highlightedBars;
+        this.highlightedBars.clear();
+        this.highlightedBars.addAll(highlightedBars);
+        notifyDataSetChanged();
     }
 
 
@@ -72,11 +66,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         holder.bar.setLayoutParams(new LinearLayoutCompat.LayoutParams(barWidth, ViewGroup
                 .LayoutParams.MATCH_PARENT));
 
-        if (highlightedBars.contains(position)) {
-            holder.positive.setBackgroundResource(R.drawable.min_max_bar);
-        } else {
-            holder.positive.setBackgroundResource(R.drawable.normal_bar);
-        }
+        holder.positive.setBackgroundResource(highlightedBars.contains(position) ? R.drawable
+                .min_max_bar : R.drawable.normal_bar);
 
         double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
@@ -91,8 +82,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
                 resolvedNegativeValue, holder.negative);
         ean.setDuration(1000);
         holder.negative.startAnimation(ean);
-
-
     }
 
     @Override
