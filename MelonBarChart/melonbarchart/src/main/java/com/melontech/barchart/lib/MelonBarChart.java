@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +84,6 @@ public class MelonBarChart extends LinearLayout {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        Log.d("zxc", "onWindowFocusChanged");
         initializeChart();
     }
 
@@ -201,7 +199,6 @@ public class MelonBarChart extends LinearLayout {
         if (defaultScaleMax != 0 && currentScaleMax < defaultScaleMax) {
             currentScaleMax = defaultScaleMax;
         }
-        Log.d("zxc", "currentScaleMax: " + currentScaleMax);
     }
 
     private void initializeData() {

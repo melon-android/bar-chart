@@ -75,7 +75,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
                 .LayoutParams.MATCH_PARENT));
 
         holder.positive.setBackgroundResource(highlightedBars.contains(position) ? R.drawable
-                .min_max_bar : R.drawable.normal_bar);
+                .highlighted_bar : R.drawable.normal_bar);
 
         double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
