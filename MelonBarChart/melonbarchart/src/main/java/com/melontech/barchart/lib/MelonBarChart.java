@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,12 +37,13 @@ public class MelonBarChart extends LinearLayout {
     RecyclerView list;
 
     private Parameters params;
-    private List<Double> values;
+    private List<Double> values = new ArrayList<>();
 
     private double min, max;
     private int minPos, maxPos;
     private double currentScaleMax;
     private int barWidth;
+    private boolean initialized = false;
 
     BarAdapter adapter;
 
@@ -91,26 +93,31 @@ public class MelonBarChart extends LinearLayout {
                 } else {
                     chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                initializeChart();
-                constructBackgroundGrid();
+                initialized = true;
+                initNew();
             }
         });
     }
 
+    private void initNew() {
+        params.labeledBars.clear();
+        params.highlightedBars.clear();
+        if (values.size() > 0 && initialized) {
+            initializeChart();
+            constructBackgroundGrid();
+        }
+    }
+
     private void initializeChart() {
+
+        ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
+        layoutParams.width = LayoutParams.MATCH_PARENT;
+        chart.setLayoutParams(layoutParams);
+
+        chart.measure(0, 0);
 
         barWidth = calculateBarWidth();
         resizeChart(barWidth);
-
-
-        //TODO
-        fillFakeData();
-
-        addZeroPadding();
-        trimDataSize();
-        getMinMax();
-        calculateScale();
-        //TODO
 
         adapter = new BarAdapter(barWidth, currentScaleMax);
 
@@ -126,6 +133,7 @@ public class MelonBarChart extends LinearLayout {
             }
         });
 
+        Log.d("zxc", "valSize: " + values.size());
         adapter.setValues(values);
 
         params.highlightedBars.add(minPos);
@@ -140,7 +148,7 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private int calculateBarWidth() {
-        return chart.getWidth() / params.fixedDataSetSize;
+        return values.size() != 0 ? chart.getWidth() / values.size() : 0;
     }
 
     private void resizeChart(int barWidth) {
@@ -200,35 +208,39 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void constructBackgroundGrid() {
-        int gridLineCount = (int) (currentScaleMax / params.scaleStep);
-        View view, subview;
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
-                .LAYOUT_INFLATER_SERVICE);
+        if (params.scaleStep > 0 && currentScaleMax != 0) {
+            int gridLineCount = (int) (currentScaleMax / params.scaleStep);
+            View view, subview;
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                    .LAYOUT_INFLATER_SERVICE);
 
-        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
-                .LayoutParams.MATCH_PARENT, 0, 1);
-        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
-                .MATCH_PARENT, 1);
-        baselineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
-                (DASHED_LINE_MARGIN_RIGHT), 0);
+            LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
+            LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0,
+                    LayoutParams.MATCH_PARENT, 1);
+            baselineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
+                    (DASHED_LINE_MARGIN_RIGHT), 0);
 
-        grid.removeAllViews();
+            grid.removeAllViews();
 
-        for (int i = gridLineCount - 1; i >= 0; i--) {
-            if (params.dashedLines.contains(i)) {
-                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
-                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
-                for (int j = 0; j < params.fixedDataSetSize; j++) {
-                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
-                    subview.setLayoutParams(baselineParams);
-                    innerFrame.addView(subview);
+            for (int i = gridLineCount - 1; i >= 0; i--) {
+                if (params.dashedLines.contains(i)) {
+                    view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
+                    LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
+                    for (int j = 0; j < params.fixedDataSetSize; j++) {
+                        subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame,
+                                false);
+                        subview.setLayoutParams(baselineParams);
+                        innerFrame.addView(subview);
+                    }
+
+                } else {
+                    view = inflater.inflate(R.layout.view_grid_line, grid, false);
                 }
+                view.setLayoutParams(horizontalParams);
+                grid.addView(view);
 
-            } else {
-                view = inflater.inflate(R.layout.view_grid_line, grid, false);
             }
-            view.setLayoutParams(horizontalParams);
-            grid.addView(view);
         }
     }
 
@@ -266,38 +278,6 @@ public class MelonBarChart extends LinearLayout {
         return dashedLines;
     }
 
-    private void fillFakeData() {
-        values = new ArrayList<>();
-
-        values.add(8d);
-        values.add(7d);
-        values.add(0d);
-        values.add(13d);
-        values.add(14d);
-        values.add(18d);
-        values.add(3d);
-        values.add(12d);
-        values.add(15d);
-        values.add(5d);
-        values.add(2d);
-        values.add(4d);
-        values.add(6d);
-        values.add(8d);
-        values.add(8d);
-        values.add(7d);
-        values.add(0d);
-        values.add(13d);
-        values.add(30d);
-        values.add(10d);
-        values.add(7d);
-        values.add(15d);
-        values.add(5d);
-        values.add(2d);
-        values.add(4d);
-        values.add(6d);
-        values.add(8d);
-    }
-
     private int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
@@ -309,7 +289,7 @@ public class MelonBarChart extends LinearLayout {
     }
 
     public void animateBars() {
-        adapter.animate();
+        initNew();
     }
 
     private Parameters getAtttributeParameters(Context context, AttributeSet attrs) {
@@ -317,8 +297,8 @@ public class MelonBarChart extends LinearLayout {
                 .MelonBarChart, 0, 0);
         Parameters params = new Parameters();
         try {
-            params.fixedDataSetSize = a.getInteger(R.styleable
-                    .MelonBarChart_fixed_data_set_size, DefaultParameters.fixedDataSetSize);
+            params.fixedDataSetSize = a.getInteger(R.styleable.MelonBarChart_fixed_data_set_size,
+                    DefaultParameters.fixedDataSetSize);
             params.scaleStep = a.getFloat(R.styleable.MelonBarChart_scale_step, DefaultParameters
                     .scaleStep);
             params.absoluteScaleMax = a.getFloat(R.styleable
@@ -368,6 +348,18 @@ public class MelonBarChart extends LinearLayout {
         static final float minimumScaleMax = 0f;
         static final int labelMarginBottom = 2;
         static final String labelFormat = "%.2d";
+    }
+
+    public void setValues(List<Double> values) {
+        this.values.clear();
+        this.values.addAll(values);
+
+        addZeroPadding();
+        trimDataSize();
+        getMinMax();
+        calculateScale();
+
+        initNew();
     }
 
 }
