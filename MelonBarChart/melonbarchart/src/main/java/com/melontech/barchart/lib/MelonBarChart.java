@@ -1,6 +1,7 @@
 package com.melontech.barchart.lib;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -8,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,7 +57,6 @@ public class MelonBarChart extends LinearLayout {
     private int minPos, maxPos;
     private double currentScaleMax;
     private int barWidth;
-    private boolean firstTime = true;
 
     BarAdapter adapter;
 
@@ -91,16 +92,20 @@ public class MelonBarChart extends LinearLayout {
             }
         };
         list.setLayoutManager(layoutManager);
-    }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasWindowFocus) {
-        super.onWindowFocusChanged(hasWindowFocus);
-        if(firstTime){
-            initializeChart();
-            constructBackgroundGrid();
-            firstTime = false;
-        }
+        chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                    chart.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }else{
+                    chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                initializeChart();
+                constructBackgroundGrid();
+            }
+        });
     }
 
     private void initializeChart() {
