@@ -184,11 +184,12 @@ public class MelonBarChart extends LinearLayout {
             textView.setText(values.get(position).toString() + "h");
             textView.measure(0, 0);
             int textViewWidth = textView.getMeasuredWidth();
+            int textViewHeight = textView.getMeasuredHeight();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(1) + Math.round(barWidth / 2f) -
                     Math.round(textViewWidth / 2f), chart.getMeasuredHeight() - adapter
-                    .getBarHeight(position) + dpToPx(12), 0, 0);
+                    .getBarHeight(position) - textViewHeight - dpToPx(2), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }

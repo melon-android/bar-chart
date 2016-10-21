@@ -3,6 +3,7 @@ package com.melontech.barchart.lib;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import java.util.Set;
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
+    private static final long ANIMATION_END_BUFFER = 200;
+
     private static final long DEFAULT_ANIMTION_DURATION = 1000;
 
     private long animationDuration = DEFAULT_ANIMTION_DURATION;
@@ -39,7 +42,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private Handler handler = new Handler();
 
-    private Map<Integer, Integer> barHeights = new HashMap();
+    private int[] barHeights;
 
     private Runnable notifyAnimationCompleted = new Runnable() {
         @Override
@@ -62,13 +65,13 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             @Override
             public void onChanged() {
 
-                barHeights.clear();
-
                 if (animationListener != null) {
                     animationListener.onAnimationStaring();
                 }
                 handler.removeCallbacks(notifyAnimationCompleted);
-                handler.postDelayed(notifyAnimationCompleted, animationDuration);
+                handler.postDelayed(notifyAnimationCompleted, animationDuration +
+                        ANIMATION_END_BUFFER);
+
             }
         });
     }
@@ -82,6 +85,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     public void setValues(List<Double> values) {
+        this.barHeights = new int[values.size()];
         this.values.clear();
         this.values.addAll(values);
         notifyDataSetChanged();
@@ -98,7 +102,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     public int getBarHeight(int position) {
-        return barHeights.get(position);
+        Log.d("zxc", "bh: " + barHeights[position]);
+        return barHeights[position];
     }
 
     @Override
@@ -130,7 +135,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                barHeights.put(position, holder.positive.getMeasuredHeight());
+                Log.d("zxc", "onAnimationEnd " + holder.positive.getMeasuredHeight());
+                barHeights[position] = holder.positive.getMeasuredHeight();
             }
 
             @Override
