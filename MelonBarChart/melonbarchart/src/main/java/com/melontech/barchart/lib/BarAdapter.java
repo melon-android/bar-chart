@@ -37,6 +37,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private AnimationListener animationListener;
 
+    private boolean animate = true;
+
     private Handler handler = new Handler();
 
     private int[] barHeights;
@@ -44,6 +46,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     private Runnable notifyAnimationCompleted = new Runnable() {
         @Override
         public void run() {
+            animate = false;
             if (animationListener != null) {
                 animationListener.onAminationComplete();
             }
@@ -107,6 +110,11 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         return barHeights[position];
     }
 
+    public void animate() {
+        animate = true;
+        notifyDataSetChanged();
+    }
+
     @Override
     public BarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bar, parent,
@@ -125,25 +133,33 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
 
+        if(animate) {
+            animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
+            animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
+                    animationDuration).setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    barHeights[position] = holder.positive.getMeasuredHeight();
+                }
 
-        animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
-        animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
-                animationDuration).setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
 
-            }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+        }else{
+            setWeight((float) resolvedPositiveValue, holder.positive);
+            setWeight((float) resolvedNegativeValue, holder.negative);
+        }
+    }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                barHeights[position] = holder.positive.getMeasuredHeight();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
+    private void setWeight(float weight, View view) {
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
+        lp.weight = weight;
+        view.setLayoutParams(lp);
     }
 
     private ExpandAnimation animateWeight(float startWeight, float endWeight, View view, long

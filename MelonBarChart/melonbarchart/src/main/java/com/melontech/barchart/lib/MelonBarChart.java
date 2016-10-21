@@ -55,6 +55,7 @@ public class MelonBarChart extends LinearLayout {
     private int minPos, maxPos;
     private double currentScaleMax;
     private int barWidth;
+    private boolean firstTime = true;
 
     BarAdapter adapter;
 
@@ -95,8 +96,11 @@ public class MelonBarChart extends LinearLayout {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        initializeChart();
-        constructBackgroundGrid();
+        if(firstTime){
+            initializeChart();
+            constructBackgroundGrid();
+            firstTime = false;
+        }
     }
 
     private void initializeChart() {
@@ -318,6 +322,10 @@ public class MelonBarChart extends LinearLayout {
 
     private double ceil(double input, double step) {
         return Math.ceil(input / step) * step;
+    }
+
+    public void animateBars(){
+        adapter.animate();
     }
 
 }
