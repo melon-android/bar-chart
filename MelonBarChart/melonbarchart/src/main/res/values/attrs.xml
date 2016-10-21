@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MelonBarChart">
+        <attr name="fixed_data_set_size" format="integer"/>
+        <attr name="scale_step" format="float"/>
+        <attr name="absolute_scale_maximum" format="float"/>
+        <attr name="minimum_sclae_maximum" format="float"/>
+        <attr name="label_margin_bottom" format="dimension"/>
+        <attr name="labem_format" format="string"/>
+    </declare-styleable>
+</resources>

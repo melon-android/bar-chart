@@ -1,6 +1,7 @@
 package com.melontech.barchart.lib;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,14 +23,6 @@ import java.util.Set;
 
 public class MelonBarChart extends LinearLayout {
 
-    private static final double DEFAULT_SCALE_STEP = 2f;
-    private static final double DEFAULT_ABSOLUTE_SCALE_MAX = 24f;
-    private static final double DEFAULT_DEFAULT_SCALE_MAX = 12f;
-    private static final int DEFAULT_CHART_DATASET_SIZE = 30;
-    private static final int DEFAULT_LABEL_MARGIN_BOTTOM = 2;
-    private static final String DEFAULT_LABEL_FORMAT = "%.2fh";
-
-
     private static final double DEFAULT_SCALE_PADDING = 0.2;
 
     private static final int DASHED_LINE_MARGIN_LEFT = 2;
@@ -42,15 +35,7 @@ public class MelonBarChart extends LinearLayout {
     FrameLayout labels;
     RecyclerView list;
 
-    private int chartDataSetSize;
-    private Set<Integer> dashedLines;
-    private double scaleStep;
-    private double absoluteScaleMax;
-    private double defaultScaleMax;
-    private int labelMarginBottom;
-    private String labelFormat;
-    Set<Integer> highlightedBars = new HashSet<>();
-    Set<Integer> labeledBars = new HashSet<>();
+    private Parameters params;
     private List<Double> values;
 
     private double min, max;
@@ -62,20 +47,20 @@ public class MelonBarChart extends LinearLayout {
 
     public MelonBarChart(Context context) {
         super(context);
-        init();
+        init(context, null);
     }
 
     public MelonBarChart(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context, attrs);
     }
 
     public MelonBarChart(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attributeSet) {
         View root = inflate(getContext(), R.layout.view_bar_chart, this);
 
         title = (TextView) root.findViewById(R.id.title);
@@ -92,6 +77,9 @@ public class MelonBarChart extends LinearLayout {
             }
         };
         list.setLayoutManager(layoutManager);
+
+        params = attributeSet != null ? getAtttributeParameters(context, attributeSet) :
+                getDefaultParameters();
 
         chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
                 .OnGlobalLayoutListener() {
@@ -110,8 +98,6 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void initializeChart() {
-
-        initializeData();
 
         barWidth = calculateBarWidth();
         resizeChart(barWidth);
@@ -142,33 +128,23 @@ public class MelonBarChart extends LinearLayout {
 
         adapter.setValues(values);
 
-        highlightedBars.add(minPos);
-        highlightedBars.add(maxPos);
+        params.highlightedBars.add(minPos);
+        params.highlightedBars.add(maxPos);
 
-        labeledBars.add(minPos);
-        labeledBars.add(maxPos);
+        params.labeledBars.add(minPos);
+        params.labeledBars.add(maxPos);
 
-        adapter.setHighlightedBars(highlightedBars);
+        adapter.setHighlightedBars(params.highlightedBars);
 
         list.setAdapter(adapter);
     }
 
-    private void initializeData() {
-        chartDataSetSize = DEFAULT_CHART_DATASET_SIZE;
-        scaleStep = DEFAULT_SCALE_STEP;
-        absoluteScaleMax = DEFAULT_ABSOLUTE_SCALE_MAX;
-        defaultScaleMax = DEFAULT_DEFAULT_SCALE_MAX;
-        labelMarginBottom = DEFAULT_LABEL_MARGIN_BOTTOM;
-        labelFormat = DEFAULT_LABEL_FORMAT;
-        dashedLines = fillFakeDashedLinesSet();
-    }
-
     private int calculateBarWidth() {
-        return chart.getWidth() / chartDataSetSize;
+        return chart.getWidth() / params.fixedDataSetSize;
     }
 
     private void resizeChart(int barWidth) {
-        int newChartWidth = chartDataSetSize * barWidth;
+        int newChartWidth = params.fixedDataSetSize * barWidth;
         if (chart.getWidth() != newChartWidth) {
             ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
             layoutParams.width = newChartWidth;
@@ -177,16 +153,16 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void addZeroPadding() {
-        if (chartDataSetSize > 0) {
-            while (this.values.size() < chartDataSetSize) {
+        if (params.fixedDataSetSize > 0) {
+            while (this.values.size() < params.fixedDataSetSize) {
                 this.values.add(0, 0d);
             }
         }
     }
 
     private void trimDataSize() {
-        if (chartDataSetSize > 0) {
-            while (this.values.size() > chartDataSetSize) {
+        if (params.fixedDataSetSize > 0) {
+            while (this.values.size() > params.fixedDataSetSize) {
                 this.values.remove(0);
             }
         }
@@ -213,17 +189,18 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void calculateScale() {
-        currentScaleMax = scaleStep != 0 ? ceil(max, scaleStep) : max * (1 + DEFAULT_SCALE_PADDING);
-        if (absoluteScaleMax != 0 && currentScaleMax > absoluteScaleMax) {
-            currentScaleMax = absoluteScaleMax;
+        currentScaleMax = params.scaleStep != 0 ? ceil(max, params.scaleStep) : max * (1 +
+                DEFAULT_SCALE_PADDING);
+        if (params.absoluteScaleMax != 0 && currentScaleMax > params.absoluteScaleMax) {
+            currentScaleMax = params.absoluteScaleMax;
         }
-        if (defaultScaleMax != 0 && currentScaleMax < defaultScaleMax) {
-            currentScaleMax = defaultScaleMax;
+        if (params.minimumScaleMax != 0 && currentScaleMax < params.minimumScaleMax) {
+            currentScaleMax = params.minimumScaleMax;
         }
     }
 
     private void constructBackgroundGrid() {
-        int gridLineCount = (int) (currentScaleMax / scaleStep);
+        int gridLineCount = (int) (currentScaleMax / params.scaleStep);
         View view, subview;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE);
@@ -238,10 +215,10 @@ public class MelonBarChart extends LinearLayout {
         grid.removeAllViews();
 
         for (int i = gridLineCount - 1; i >= 0; i--) {
-            if (dashedLines.contains(i)) {
+            if (params.dashedLines.contains(i)) {
                 view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
                 LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
-                for (int j = 0; j < chartDataSetSize; j++) {
+                for (int j = 0; j < params.fixedDataSetSize; j++) {
                     subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
                     subview.setLayoutParams(baselineParams);
                     innerFrame.addView(subview);
@@ -259,9 +236,10 @@ public class MelonBarChart extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE);
         TextView textView;
-        for (int position : labeledBars) {
+        for (int position : params.labeledBars) {
             textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
-            textView.setText(String.format(Locale.getDefault(), labelFormat, values.get(position)));
+            textView.setText(String.format(Locale.getDefault(), params.labelFormat, values.get
+                    (position)));
             textView.measure(0, 0);
             int textViewWidth = textView.getMeasuredWidth();
             int textViewHeight = textView.getMeasuredHeight();
@@ -269,8 +247,8 @@ public class MelonBarChart extends LinearLayout {
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
                     (barWidth / 2f) - Math.round(textViewWidth / 2f), chart.getMeasuredHeight() -
-                    adapter.getBarHeight(position) - textViewHeight - dpToPx(labelMarginBottom),
-                    0, 0);
+                    adapter.getBarHeight(position) - textViewHeight - dpToPx(params
+                    .labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }
@@ -332,6 +310,64 @@ public class MelonBarChart extends LinearLayout {
 
     public void animateBars() {
         adapter.animate();
+    }
+
+    private Parameters getAtttributeParameters(Context context, AttributeSet attrs) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable
+                .MelonBarChart, 0, 0);
+        Parameters params = new Parameters();
+        try {
+            params.fixedDataSetSize = a.getInteger(R.styleable
+                    .MelonBarChart_fixed_data_set_size, DefaultParameters.fixedDataSetSize);
+            params.scaleStep = a.getFloat(R.styleable.MelonBarChart_scale_step, DefaultParameters
+                    .scaleStep);
+            params.absoluteScaleMax = a.getFloat(R.styleable
+                    .MelonBarChart_absolute_scale_maximum, DefaultParameters.absoluteScaleMax);
+            params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_sclae_maximum,
+                    DefaultParameters.minimumScaleMax);
+            params.labelMarginBottom = a.getDimensionPixelSize(R.styleable
+                    .MelonBarChart_label_margin_bottom, dpToPx(DefaultParameters
+                    .labelMarginBottom));
+            params.labelFormat = a.getString(R.styleable.MelonBarChart_labem_format);
+            if (params.labelFormat == null) {
+                params.labelFormat = DefaultParameters.labelFormat;
+            }
+        } finally {
+            a.recycle();
+        }
+        return params;
+    }
+
+    private Parameters getDefaultParameters() {
+        Parameters params = new Parameters();
+        params.fixedDataSetSize = DefaultParameters.fixedDataSetSize;
+        params.scaleStep = DefaultParameters.scaleStep;
+        params.absoluteScaleMax = DefaultParameters.absoluteScaleMax;
+        params.minimumScaleMax = DefaultParameters.minimumScaleMax;
+        params.labelMarginBottom = dpToPx(DefaultParameters.labelMarginBottom);
+        params.labelFormat = DefaultParameters.labelFormat;
+        return params;
+    }
+
+    class Parameters {
+        int fixedDataSetSize;
+        float scaleStep;
+        float absoluteScaleMax;
+        float minimumScaleMax;
+        int labelMarginBottom;
+        String labelFormat;
+        Set<Integer> dashedLines = new HashSet<>();
+        Set<Integer> highlightedBars = new HashSet<>();
+        Set<Integer> labeledBars = new HashSet<>();
+    }
+
+    static class DefaultParameters {
+        static final int fixedDataSetSize = 0;
+        static final float scaleStep = 0f;
+        static final float absoluteScaleMax = 0f;
+        static final float minimumScaleMax = 0f;
+        static final int labelMarginBottom = 2;
+        static final String labelFormat = "%.2d";
     }
 
 }

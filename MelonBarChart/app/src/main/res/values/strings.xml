@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Melon Bar Chart</string>
+    <string name="label_format">%.2fh</string>
 </resources>
