@@ -3,7 +3,6 @@ package com.melontech.barchart.lib;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,8 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -102,7 +99,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     public int getBarHeight(int position) {
-        Log.d("zxc", "bh: " + barHeights[position]);
         return barHeights[position];
     }
 
@@ -135,7 +131,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Log.d("zxc", "onAnimationEnd " + holder.positive.getMeasuredHeight());
                 barHeights[position] = holder.positive.getMeasuredHeight();
             }
 
