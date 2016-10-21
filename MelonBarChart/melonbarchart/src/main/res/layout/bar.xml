@@ -29,6 +29,6 @@
             android:layout_height="0dp"
             android:layout_weight="0"
             android:background="@android:color/holo_green_dark"/>
-        
+
     </LinearLayout>
 </FrameLayout>

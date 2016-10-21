@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class MelonBarChart extends LinearLayout {
@@ -22,10 +23,16 @@ public class MelonBarChart extends LinearLayout {
     private static final double DEFAULT_SCALE_STEP = 2f;
     private static final double DEFAULT_ABSOLUTE_SCALE_MAX = 24f;
     private static final double DEFAULT_DEFAULT_SCALE_MAX = 12f;
-    private static final int DEFAULT_CHART_WIDTH = 30;
+    private static final int DEFAULT_CHART_DATASET_SIZE = 30;
+    private static final int DEFAULT_LABEL_MARGIN_BOTTOM = 2;
+    private static final String DEFAULT_LABEL_FORMAT = "%.2fh";
+
 
     private static final double DEFAULT_SCALE_PADDING = 0.2;
 
+    private static final int DASHED_LINE_MARGIN_LEFT = 2;
+    private static final int DASHED_LINE_MARGIN_RIGHT = 1;
+    private static final int SIDE_BAR_MARGIN = 1;
 
     TextView title;
     LinearLayout grid;
@@ -33,20 +40,21 @@ public class MelonBarChart extends LinearLayout {
     FrameLayout labels;
     RecyclerView list;
 
-    private int chartWidth;
+    private int chartDataSetSize;
     private Set<Integer> dashedLines;
     private double scaleStep;
     private double absoluteScaleMax;
     private double defaultScaleMax;
-    private double currentScaleMax;
-    private int barWidth;
+    private int labelMarginBottom;
+    private String labelFormat;
+    Set<Integer> highlightedBars = new HashSet<>();
+    Set<Integer> labeledBars = new HashSet<>();
+    private List<Double> values;
 
     private double min, max;
     private int minPos, maxPos;
-
-    private List<Double> values;
-    Set<Integer> highlightedBars = new HashSet<>();
-    Set<Integer> labeledBars = new HashSet<>();
+    private double currentScaleMax;
+    private int barWidth;
 
     BarAdapter adapter;
 
@@ -88,30 +96,25 @@ public class MelonBarChart extends LinearLayout {
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
         initializeChart();
+        constructBackgroundGrid();
     }
 
     private void initializeChart() {
 
         initializeData();
 
-        Set<Integer> dashedLines = fillFakeDashedLinesSet();
-
-        int initialWidth = chart.getWidth();
-        barWidth = initialWidth / chartWidth;
-        int newWidth = chartWidth * barWidth;
-        if (initialWidth != newWidth) {
-            ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
-            layoutParams.width = newWidth;
-            chart.setLayoutParams(layoutParams);
-        }
+        barWidth = calculateBarWidth();
+        resizeChart(barWidth);
 
 
+        //TODO
         fillFakeData();
 
         addZeroPadding();
         trimDataSize();
         getMinMax();
         calculateScale();
+        //TODO
 
         adapter = new BarAdapter(barWidth, currentScaleMax);
 
@@ -138,65 +141,45 @@ public class MelonBarChart extends LinearLayout {
         adapter.setHighlightedBars(highlightedBars);
 
         list.setAdapter(adapter);
-
-        constructBackgroundGrid();
-
     }
 
-    private void constructBackgroundGrid() {
-        int gridLineCount = (int) (currentScaleMax / scaleStep);
-        View view, subview;
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
-                .LAYOUT_INFLATER_SERVICE);
+    private void initializeData() {
+        chartDataSetSize = DEFAULT_CHART_DATASET_SIZE;
+        scaleStep = DEFAULT_SCALE_STEP;
+        absoluteScaleMax = DEFAULT_ABSOLUTE_SCALE_MAX;
+        defaultScaleMax = DEFAULT_DEFAULT_SCALE_MAX;
+        labelMarginBottom = DEFAULT_LABEL_MARGIN_BOTTOM;
+        labelFormat = DEFAULT_LABEL_FORMAT;
+        dashedLines = fillFakeDashedLinesSet();
+    }
 
-        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
-                .LayoutParams.MATCH_PARENT, 0, 1);
-        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
-                .MATCH_PARENT, 1);
-        baselineParams.setMargins(dpToPx(2), 0, dpToPx(1), 0);
+    private int calculateBarWidth() {
+        return chart.getWidth() / chartDataSetSize;
+    }
 
-        grid.removeAllViews();
+    private void resizeChart(int barWidth) {
+        int newChartWidth = chartDataSetSize * barWidth;
+        if (chart.getWidth() != newChartWidth) {
+            ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
+            layoutParams.width = newChartWidth;
+            chart.setLayoutParams(layoutParams);
+        }
+    }
 
-        for (int i = gridLineCount - 1; i >= 0; i--) {
-            if (dashedLines.contains(i)) {
-                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
-                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
-                for (int j = 0; j < chartWidth; j++) {
-                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
-                    subview.setLayoutParams(baselineParams);
-                    innerFrame.addView(subview);
-                }
-
-            } else {
-                view = inflater.inflate(R.layout.view_grid_line, grid, false);
+    private void addZeroPadding() {
+        if (chartDataSetSize > 0) {
+            while (this.values.size() < chartDataSetSize) {
+                this.values.add(0, 0d);
             }
-            view.setLayoutParams(horizontalParams);
-            grid.addView(view);
         }
     }
 
-    private void constructLabels() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
-                .LAYOUT_INFLATER_SERVICE);
-        TextView textView;
-        for (int position : labeledBars) {
-            textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
-            textView.setText(values.get(position).toString() + "h");
-            textView.measure(0, 0);
-            int textViewWidth = textView.getMeasuredWidth();
-            int textViewHeight = textView.getMeasuredHeight();
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
-                    .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(position * barWidth + dpToPx(1) + Math.round(barWidth / 2f) -
-                    Math.round(textViewWidth / 2f), chart.getMeasuredHeight() - adapter
-                    .getBarHeight(position) - textViewHeight - dpToPx(2), 0, 0);
-            textView.setLayoutParams(layoutParams);
-            labels.addView(textView);
+    private void trimDataSize() {
+        if (chartDataSetSize > 0) {
+            while (this.values.size() > chartDataSetSize) {
+                this.values.remove(0);
+            }
         }
-    }
-
-    private void clearLabels() {
-        labels.removeAllViews();
     }
 
     private void getMinMax() {
@@ -219,22 +202,6 @@ public class MelonBarChart extends LinearLayout {
         }
     }
 
-    private void addZeroPadding() {
-        if (chartWidth > 0) {
-            while (this.values.size() < chartWidth) {
-                this.values.add(0, 0d);
-            }
-        }
-    }
-
-    private void trimDataSize() {
-        if (chartWidth > 0) {
-            while (this.values.size() > chartWidth) {
-                this.values.remove(0);
-            }
-        }
-    }
-
     private void calculateScale() {
         currentScaleMax = scaleStep != 0 ? ceil(max, scaleStep) : max * (1 + DEFAULT_SCALE_PADDING);
         if (absoluteScaleMax != 0 && currentScaleMax > absoluteScaleMax) {
@@ -245,12 +212,62 @@ public class MelonBarChart extends LinearLayout {
         }
     }
 
-    private void initializeData() {
-        chartWidth = DEFAULT_CHART_WIDTH;
-        scaleStep = DEFAULT_SCALE_STEP;
-        absoluteScaleMax = DEFAULT_ABSOLUTE_SCALE_MAX;
-        defaultScaleMax = DEFAULT_DEFAULT_SCALE_MAX;
-        dashedLines = fillFakeDashedLinesSet();
+    private void constructBackgroundGrid() {
+        int gridLineCount = (int) (currentScaleMax / scaleStep);
+        View view, subview;
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE);
+
+        LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams(LinearLayout
+                .LayoutParams.MATCH_PARENT, 0, 1);
+        LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0, LayoutParams
+                .MATCH_PARENT, 1);
+        baselineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
+                (DASHED_LINE_MARGIN_RIGHT), 0);
+
+        grid.removeAllViews();
+
+        for (int i = gridLineCount - 1; i >= 0; i--) {
+            if (dashedLines.contains(i)) {
+                view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
+                LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
+                for (int j = 0; j < chartDataSetSize; j++) {
+                    subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame, false);
+                    subview.setLayoutParams(baselineParams);
+                    innerFrame.addView(subview);
+                }
+
+            } else {
+                view = inflater.inflate(R.layout.view_grid_line, grid, false);
+            }
+            view.setLayoutParams(horizontalParams);
+            grid.addView(view);
+        }
+    }
+
+    private void constructLabels() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE);
+        TextView textView;
+        for (int position : labeledBars) {
+            textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
+            textView.setText(String.format(Locale.getDefault(), labelFormat, values.get(position)));
+            textView.measure(0, 0);
+            int textViewWidth = textView.getMeasuredWidth();
+            int textViewHeight = textView.getMeasuredHeight();
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
+                    .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
+                    (barWidth / 2f) - Math.round(textViewWidth / 2f), chart.getMeasuredHeight() -
+                    adapter.getBarHeight(position) - textViewHeight - dpToPx
+                    (DEFAULT_LABEL_MARGIN_BOTTOM), 0, 0);
+            textView.setLayoutParams(layoutParams);
+            labels.addView(textView);
+        }
+    }
+
+    private void clearLabels() {
+        labels.removeAllViews();
     }
 
     private Set<Integer> fillFakeDashedLinesSet() {

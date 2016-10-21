@@ -27,11 +27,11 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private long animationDuration = DEFAULT_ANIMTION_DURATION;
 
-    private List<Double> values = new ArrayList<>();
-
     private int barWidth;
 
-    private double scaleMax = 0f;
+    private double scaleMax;
+
+    private List<Double> values = new ArrayList<>();
 
     private Set<Integer> highlightedBars = new HashSet<>();
 
@@ -50,8 +50,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         }
     };
 
-    public BarAdapter(List<Double> values, int barwidth, double scaleMax) {
-        this.barWidth = barwidth;
+    public BarAdapter(List<Double> values, int barWidth, double scaleMax) {
+        this.barWidth = barWidth;
         this.scaleMax = scaleMax;
 
         if (values != null) {
@@ -73,8 +73,8 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         });
     }
 
-    public BarAdapter(int barwidth, double scaleMax) {
-        this(null, barwidth, scaleMax);
+    public BarAdapter(int barWidth, double scaleMax) {
+        this(null, barWidth, scaleMax);
     }
 
     public void setAnimationDuration(long animationDuration) {
@@ -96,6 +96,11 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     public void setAnimationListener(AnimationListener animationListener) {
         this.animationListener = animationListener;
+    }
+
+    public void setScaleMax(double scaleMax) {
+        this.scaleMax = scaleMax;
+        notifyDataSetChanged();
     }
 
     public int getBarHeight(int position) {
