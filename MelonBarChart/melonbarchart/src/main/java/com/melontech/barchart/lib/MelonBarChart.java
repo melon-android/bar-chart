@@ -93,13 +93,14 @@ public class MelonBarChart extends LinearLayout {
         };
         list.setLayoutManager(layoutManager);
 
-        chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
+                .OnGlobalLayoutListener() {
 
             @Override
             public void onGlobalLayout() {
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                     chart.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }else{
+                } else {
                     chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
                 initializeChart();
@@ -268,8 +269,8 @@ public class MelonBarChart extends LinearLayout {
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
                     (barWidth / 2f) - Math.round(textViewWidth / 2f), chart.getMeasuredHeight() -
-                    adapter.getBarHeight(position) - textViewHeight - dpToPx
-                    (DEFAULT_LABEL_MARGIN_BOTTOM), 0, 0);
+                    adapter.getBarHeight(position) - textViewHeight - dpToPx(labelMarginBottom),
+                    0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }
@@ -329,7 +330,7 @@ public class MelonBarChart extends LinearLayout {
         return Math.ceil(input / step) * step;
     }
 
-    public void animateBars(){
+    public void animateBars() {
         adapter.animate();
     }
 
