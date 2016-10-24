@@ -15,7 +15,7 @@
     <FrameLayout
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/layout_border">
 
@@ -29,16 +29,16 @@
             <LinearLayout
                 android:id="@+id/grid"
                 android:layout_width="match_parent"
-                android:layout_marginTop="20dp"
-                android:layout_height="120dp"
+                android:layout_marginTop="30dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="20dp">
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp">
 
                 <View
                     android:id="@+id/blank"
