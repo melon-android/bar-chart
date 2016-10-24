@@ -25,7 +25,7 @@
         custom:absolute_scale_maximum="24.0"
         custom:fixed_data_set_size="30"
         custom:scale_step="2"
-        custom:label_margin_bottom="2dp"
+        custom:label_margin_bottom="1dp"
         custom:labem_format="@string/label_format"
         custom:minimum_sclae_maximum="12.0"/>
 
