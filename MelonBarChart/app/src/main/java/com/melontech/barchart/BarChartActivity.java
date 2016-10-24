@@ -32,7 +32,6 @@ public class BarChartActivity extends AppCompatActivity {
         });
         fillFakeData();
         chart.setValues(values);
-
     }
 
     private void fillFakeData() {

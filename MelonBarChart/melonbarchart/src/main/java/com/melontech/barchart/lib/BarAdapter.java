@@ -41,8 +41,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private Handler handler = new Handler();
 
-    private int[] barHeights;
-
     private Runnable notifyAnimationCompleted = new Runnable() {
         @Override
         public void run() {
@@ -85,7 +83,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     }
 
     public void setValues(List<Double> values) {
-        this.barHeights = new int[values.size()];
         this.values.clear();
         this.values.addAll(values);
         notifyDataSetChanged();
@@ -104,10 +101,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     public void setScaleMax(double scaleMax) {
         this.scaleMax = scaleMax;
         notifyDataSetChanged();
-    }
-
-    public int getBarHeight(int position) {
-        return barHeights[position];
     }
 
     public void animate() {
@@ -133,26 +126,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
 
-        if(animate) {
+        if (animate) {
             animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
             animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
-                    animationDuration).setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    barHeights[position] = holder.positive.getMeasuredHeight();
-                }
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-        }else{
+                    animationDuration);
+        } else {
             setWeight((float) resolvedPositiveValue, holder.positive);
             setWeight((float) resolvedNegativeValue, holder.negative);
+            holder.positive.measure(0, 0);
         }
     }
 
