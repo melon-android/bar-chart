@@ -37,14 +37,11 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private AnimationListener animationListener;
 
-    private boolean animate = true;
-
     private Handler handler = new Handler();
 
     private Runnable notifyAnimationCompleted = new Runnable() {
         @Override
         public void run() {
-            animate = false;
             if (animationListener != null) {
                 animationListener.onAminationComplete();
             }
@@ -103,11 +100,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void animate() {
-        animate = true;
-        notifyDataSetChanged();
-    }
-
     @Override
     public BarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bar, parent,
@@ -126,29 +118,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
         double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
 
-        if (animate) {
-            animateWeight(0, (float) resolvedPositiveValue, holder.positive, animationDuration);
-            animateWeight((float) scaleMax, (float) resolvedNegativeValue, holder.negative,
-                    animationDuration);
-        } else {
-            setWeight((float) resolvedPositiveValue, holder.positive);
-            setWeight((float) resolvedNegativeValue, holder.negative);
-            holder.positive.measure(0, 0);
-        }
+        setWeight((float) resolvedPositiveValue, holder.positive);
+        setWeight((float) resolvedNegativeValue, holder.negative);
     }
 
     private void setWeight(float weight, View view) {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
         lp.weight = weight;
         view.setLayoutParams(lp);
-    }
-
-    private ExpandAnimation animateWeight(float startWeight, float endWeight, View view, long
-            duration) {
-        ExpandAnimation ea = new ExpandAnimation(startWeight, endWeight, view);
-        ea.setDuration(duration);
-        view.startAnimation(ea);
-        return ea;
     }
 
     @Override

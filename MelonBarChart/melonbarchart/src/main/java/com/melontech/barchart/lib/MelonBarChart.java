@@ -1,17 +1,19 @@
 package com.melontech.barchart.lib;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,6 +37,7 @@ public class MelonBarChart extends LinearLayout {
     FrameLayout chart;
     FrameLayout labels;
     RecyclerView list;
+    View blank;
 
     private Parameters params;
     private List<Double> values = new ArrayList<>();
@@ -70,6 +73,7 @@ public class MelonBarChart extends LinearLayout {
         chart = (FrameLayout) root.findViewById(R.id.chart);
         labels = (FrameLayout) root.findViewById(R.id.labels);
         list = (RecyclerView) root.findViewById(R.id.list);
+        blank = root.findViewById(R.id.blank);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false) {
@@ -121,18 +125,6 @@ public class MelonBarChart extends LinearLayout {
 
         adapter = new BarAdapter(barWidth, currentScaleMax);
 
-        adapter.setAnimationListener(new BarAdapter.AnimationListener() {
-            @Override
-            public void onAnimationStaring() {
-                clearLabels();
-            }
-
-            @Override
-            public void onAminationComplete() {
-                constructLabels();
-            }
-        });
-
         Log.d("zxc", "valSize: " + values.size());
         adapter.setValues(values);
 
@@ -145,6 +137,8 @@ public class MelonBarChart extends LinearLayout {
         adapter.setHighlightedBars(params.highlightedBars);
 
         list.setAdapter(adapter);
+
+        animateChart(1000, list.getMeasuredHeight());
     }
 
     private int calculateBarWidth() {
@@ -255,7 +249,8 @@ public class MelonBarChart extends LinearLayout {
             textView.measure(0, 0);
             int textViewWidth = textView.getMeasuredWidth();
             int textViewHeight = textView.getMeasuredHeight();
-            int barHeight = list.getChildAt(position).findViewById(R.id.positive).getMeasuredHeight();
+            int barHeight = list.getChildAt(position).findViewById(R.id.positive)
+                    .getMeasuredHeight();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
@@ -279,17 +274,11 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
     private double ceil(double input, double step) {
         return Math.ceil(input / step) * step;
-    }
-
-    public void animateBars() {
-        initNew();
     }
 
     private Parameters getAtttributeParameters(Context context, AttributeSet attrs) {
@@ -362,4 +351,68 @@ public class MelonBarChart extends LinearLayout {
         initNew();
     }
 
+    private void animateChart(long duration, final int height) {
+        Log.d("zxc", "height: " + height);
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        list.getLayoutParams().height = 1;
+        list.setVisibility(View.VISIBLE);
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    list.getLayoutParams().height = LayoutParams.MATCH_PARENT;
+                } else {
+                    list.getLayoutParams().height = (int) (height * interpolatedTime);
+                    list.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        a.setDuration(duration);
+        list.startAnimation(a);
+
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                clearLabels();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        blank.setVisibility(VISIBLE);
+        blank.getLayoutParams().height = height;
+
+        Animation b = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    blank.setVisibility(View.GONE);
+                } else {
+                    blank.getLayoutParams().height = height - (int) (height * interpolatedTime);
+                    blank.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        b.setDuration(duration);
+        blank.startAnimation(b);
+    }
 }
