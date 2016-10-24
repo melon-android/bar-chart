@@ -47,9 +47,9 @@ public class BarChartActivity extends AppCompatActivity {
         values.add(12d);
         values.add(15d);
         values.add(5d);
-        values.add(2d);
         values.add(4d);
         values.add(6d);
+        values.add(2d);
 //        values.add(8d);
 //        values.add(8d);
 //        values.add(7d);

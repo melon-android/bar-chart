@@ -35,6 +35,7 @@ public class MelonBarChart extends LinearLayout {
     TextView title;
     LinearLayout grid;
     FrameLayout chart;
+    FrameLayout frame;
     FrameLayout labels;
     RecyclerView list;
     View blank;
@@ -71,6 +72,7 @@ public class MelonBarChart extends LinearLayout {
         title = (TextView) root.findViewById(R.id.title);
         grid = (LinearLayout) root.findViewById(R.id.grid);
         chart = (FrameLayout) root.findViewById(R.id.chart);
+        frame = (FrameLayout) root.findViewById(R.id.frame);
         labels = (FrameLayout) root.findViewById(R.id.labels);
         list = (RecyclerView) root.findViewById(R.id.list);
         blank = root.findViewById(R.id.blank);
@@ -142,14 +144,14 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private int calculateBarWidth() {
-        return values.size() != 0 ? chart.getWidth() / values.size() : 0;
+        return values.size() != 0 ? frame.getWidth() / values.size() : 0;
     }
 
     private void resizeChart(int barWidth) {
         int newChartWidth = params.fixedDataSetSize * barWidth;
-        if (chart.getWidth() != newChartWidth) {
+        if (frame.getWidth() != newChartWidth) {
             ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
-            layoutParams.width = newChartWidth;
+            layoutParams.width -= frame.getWidth() - newChartWidth;
             chart.setLayoutParams(layoutParams);
         }
     }
@@ -254,7 +256,8 @@ public class MelonBarChart extends LinearLayout {
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
-                    (barWidth / 2f) - Math.round(textViewWidth / 2f), chart.getMeasuredHeight() -
+                    (barWidth / 2f) - Math.round(textViewWidth / 2f) + ((FrameLayout
+                    .LayoutParams) frame.getLayoutParams()).leftMargin, chart.getMeasuredHeight() -
                     barHeight - textViewHeight - dpToPx(params.labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);

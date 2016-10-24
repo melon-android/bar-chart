@@ -19,31 +19,40 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/layout_border">
 
-        <LinearLayout
-            android:id="@+id/grid"
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_height="120dp"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="20dp">
-
-            <View
-                android:id="@+id/blank"
+            <LinearLayout
+                android:id="@+id/grid"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"/>
+                android:layout_marginTop="20dp"
+                android:layout_height="120dp"
+                android:orientation="vertical">
+            </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"/>
+                android:layout_height="120dp"
+                android:layout_marginTop="20dp">
 
-        </LinearLayout>
+                <View
+                    android:id="@+id/blank"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/labels"
