@@ -407,6 +407,7 @@ public class MelonBarChart extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                constructLabels();
             }
 
             @Override
