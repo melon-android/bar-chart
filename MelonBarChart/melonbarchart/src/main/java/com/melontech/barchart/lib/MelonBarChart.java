@@ -356,7 +356,7 @@ public class MelonBarChart extends LinearLayout {
         list.getLayoutParams().height = 1;
         list.setVisibility(View.VISIBLE);
 
-        Animation a = new Animation() {
+        Animation listAnimation = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 if (interpolatedTime == 1) {
@@ -373,13 +373,13 @@ public class MelonBarChart extends LinearLayout {
             }
         };
 
-        a.setDuration(duration);
-        list.startAnimation(a);
+        listAnimation.setDuration(duration);
+        list.startAnimation(listAnimation);
 
         blank.setVisibility(VISIBLE);
         blank.getLayoutParams().height = height;
 
-        Animation b = new Animation() {
+        Animation blankAnimation = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 if (interpolatedTime == 1) {
@@ -396,10 +396,10 @@ public class MelonBarChart extends LinearLayout {
             }
         };
 
-        b.setDuration(duration);
-        blank.startAnimation(b);
+        blankAnimation.setDuration(duration);
+        blank.startAnimation(blankAnimation);
 
-        b.setAnimationListener(new Animation.AnimationListener() {
+        blankAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 clearLabels();
