@@ -352,8 +352,7 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void animateChart(long duration, final int height) {
-        Log.d("zxc", "height: " + height);
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+
         list.getLayoutParams().height = 1;
         list.setVisibility(View.VISIBLE);
 
@@ -377,21 +376,6 @@ public class MelonBarChart extends LinearLayout {
         a.setDuration(duration);
         list.startAnimation(a);
 
-        a.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                clearLabels();
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-
         blank.setVisibility(VISIBLE);
         blank.getLayoutParams().height = height;
 
@@ -414,5 +398,20 @@ public class MelonBarChart extends LinearLayout {
 
         b.setDuration(duration);
         blank.startAnimation(b);
+
+        b.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                clearLabels();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
     }
 }
