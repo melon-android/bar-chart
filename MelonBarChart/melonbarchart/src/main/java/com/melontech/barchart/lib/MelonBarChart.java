@@ -210,21 +210,21 @@ public class MelonBarChart extends LinearLayout {
 
             LinearLayout.LayoutParams horizontalParams = new LinearLayout.LayoutParams
                     (LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
-            LinearLayout.LayoutParams baselineParams = new LinearLayout.LayoutParams(0,
+            LinearLayout.LayoutParams dashedLineParams = new LinearLayout.LayoutParams(0,
                     LayoutParams.MATCH_PARENT, 1);
-            baselineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
+            dashedLineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
                     (DASHED_LINE_MARGIN_RIGHT), 0);
 
             grid.removeAllViews();
 
             for (int i = gridLineCount - 1; i >= 0; i--) {
                 if (params.dashedLines.contains(i)) {
-                    view = inflater.inflate(R.layout.view_grid_line_base, grid, false);
+                    view = inflater.inflate(R.layout.view_grid_line_dashed, grid, false);
                     LinearLayout innerFrame = (LinearLayout) view.findViewById(R.id.inner_frame);
                     for (int j = 0; j < params.fixedDataSetSize; j++) {
-                        subview = inflater.inflate(R.layout.view_base_line_segment, innerFrame,
+                        subview = inflater.inflate(R.layout.view_dashed_line_segment, innerFrame,
                                 false);
-                        subview.setLayoutParams(baselineParams);
+                        subview.setLayoutParams(dashedLineParams);
                         innerFrame.addView(subview);
                     }
 
