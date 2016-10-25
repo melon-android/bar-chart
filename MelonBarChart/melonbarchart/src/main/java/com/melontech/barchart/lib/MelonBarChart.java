@@ -32,6 +32,7 @@ public class MelonBarChart extends LinearLayout {
     private static final int DASHED_LINE_MARGIN_RIGHT = 1;
     private static final int SIDE_BAR_MARGIN = 1;
 
+    LinearLayout chartRoot;
     TextView title;
     LinearLayout grid;
     FrameLayout chart;
@@ -69,6 +70,7 @@ public class MelonBarChart extends LinearLayout {
     private void init(Context context, AttributeSet attributeSet) {
         View root = inflate(getContext(), R.layout.view_bar_chart, this);
 
+        chartRoot = (LinearLayout) root.findViewById(R.id.chart_root);
         title = (TextView) root.findViewById(R.id.title);
         grid = (LinearLayout) root.findViewById(R.id.grid);
         chart = (FrameLayout) root.findViewById(R.id.chart);
@@ -116,13 +118,8 @@ public class MelonBarChart extends LinearLayout {
 
     private void initializeChart() {
 
-        ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
-        layoutParams.width = LayoutParams.MATCH_PARENT;
-        chart.setLayoutParams(layoutParams);
-
-        chart.measure(0, 0);
-
         barWidth = calculateBarWidth();
+        Log.d("zxc", "barWidth " + barWidth);
         resizeChart(barWidth);
 
         adapter = new BarAdapter(barWidth, currentScaleMax);
@@ -144,16 +141,17 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private int calculateBarWidth() {
-        return values.size() != 0 ? frame.getWidth() / values.size() : 0;
+        return values.size() != 0 ? (chartRoot.getWidth() - ((FrameLayout.LayoutParams) frame
+                .getLayoutParams()).leftMargin - ((FrameLayout.LayoutParams) frame
+                .getLayoutParams()).rightMargin) / values.size() : 0;
     }
 
     private void resizeChart(int barWidth) {
-        int newChartWidth = params.fixedDataSetSize * barWidth;
-        if (frame.getWidth() != newChartWidth) {
-            ViewGroup.LayoutParams layoutParams = chart.getLayoutParams();
-            layoutParams.width -= frame.getWidth() - newChartWidth;
-            chart.setLayoutParams(layoutParams);
-        }
+        int newChartWidth = values.size() * barWidth;
+        chart.getLayoutParams().width = newChartWidth + ((FrameLayout.LayoutParams) frame
+                .getLayoutParams()).leftMargin + ((FrameLayout.LayoutParams) frame
+                .getLayoutParams()).rightMargin;
+        Log.d("zxc", "chart.getLayoutParams().width " + chart.getLayoutParams().width);
     }
 
     private void addZeroPadding() {

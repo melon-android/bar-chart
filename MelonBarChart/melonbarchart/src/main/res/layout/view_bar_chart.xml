@@ -3,6 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="#0085b8"
+              android:id="@+id/chart_root"
               android:orientation="vertical">
 
     <TextView
@@ -43,6 +44,7 @@
                 android:orientation="vertical">
 
                 <View
+                    android:background="#FF0000"
                     android:id="@+id/blank"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"/>
