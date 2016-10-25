@@ -35,19 +35,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private Set<Integer> highlightedBars = new HashSet<>();
 
-    private AnimationListener animationListener;
-
-    private Handler handler = new Handler();
-
-    private Runnable notifyAnimationCompleted = new Runnable() {
-        @Override
-        public void run() {
-            if (animationListener != null) {
-                animationListener.onAminationComplete();
-            }
-        }
-    };
-
     public BarAdapter(List<Double> values, int barWidth, double scaleMax) {
         this.barWidth = barWidth;
         this.scaleMax = scaleMax;
@@ -55,20 +42,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         if (values != null) {
             setValues(values);
         }
-
-        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-
-                if (animationListener != null) {
-                    animationListener.onAnimationStaring();
-                }
-                handler.removeCallbacks(notifyAnimationCompleted);
-                handler.postDelayed(notifyAnimationCompleted, animationDuration +
-                        ANIMATION_END_BUFFER);
-
-            }
-        });
     }
 
     public BarAdapter(int barWidth, double scaleMax) {
@@ -89,10 +62,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         this.highlightedBars.clear();
         this.highlightedBars.addAll(highlightedBars);
         notifyDataSetChanged();
-    }
-
-    public void setAnimationListener(AnimationListener animationListener) {
-        this.animationListener = animationListener;
     }
 
     public void setScaleMax(double scaleMax) {
@@ -146,36 +115,4 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             negative = itemView.findViewById(R.id.negative);
         }
     }
-
-    private class ExpandAnimation extends Animation {
-
-        private final float mStartWeight;
-        private final float mDeltaWeight;
-        private View view;
-
-        public ExpandAnimation(float startWeight, float endWeight, View view) {
-            mStartWeight = startWeight;
-            mDeltaWeight = endWeight - startWeight;
-            this.view = view;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
-            lp.weight = (mStartWeight + (mDeltaWeight * interpolatedTime));
-            view.setLayoutParams(lp);
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
-    }
-
-    public static interface AnimationListener {
-        void onAnimationStaring();
-
-        void onAminationComplete();
-    }
-
 }
