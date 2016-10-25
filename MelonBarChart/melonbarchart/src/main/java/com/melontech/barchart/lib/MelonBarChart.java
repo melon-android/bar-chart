@@ -266,14 +266,6 @@ public class MelonBarChart extends LinearLayout {
         labels.removeAllViews();
     }
 
-    private Set<Integer> fillFakeDashedLinesSet() {
-        Set<Integer> dashedLines = new HashSet<>();
-        dashedLines.add(3);
-        dashedLines.add(7);
-
-        return dashedLines;
-    }
-
     private int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
@@ -348,6 +340,13 @@ public class MelonBarChart extends LinearLayout {
         trimDataSize();
         getMinMax();
         calculateScale();
+
+        initNew();
+    }
+
+    public void setDashedGridLines(Set<Integer> dashedLines) {
+        params.dashedLines.clear();
+        params.dashedLines.addAll(dashedLines);
 
         initNew();
     }

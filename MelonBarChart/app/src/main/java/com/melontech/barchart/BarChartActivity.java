@@ -7,8 +7,10 @@ import android.view.View;
 import com.melontech.barchart.lib.MelonBarChart;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class BarChartActivity extends AppCompatActivity {
 
@@ -30,12 +32,15 @@ public class BarChartActivity extends AppCompatActivity {
                 chart.setValues(values);
             }
         });
-        fillFakeData();
+
+        chart.setDashedGridLines(fillDashedLines());
+
+        values = fillFakeData();
         chart.setValues(values);
     }
 
-    private void fillFakeData() {
-        values = new ArrayList<>();
+    private List<Double> fillFakeData() {
+        List<Double> values = new ArrayList<>();
 
         values.add(8d);
         values.add(7d);
@@ -64,5 +69,12 @@ public class BarChartActivity extends AppCompatActivity {
 //        values.add(4d);
 //        values.add(6d);
 //        values.add(8d);
+        return values;
+    }
+
+    private Set<Integer> fillDashedLines() {
+        Set<Integer> dashedLines = new HashSet<>();
+        dashedLines.add(3);
+        return dashedLines;
     }
 }
