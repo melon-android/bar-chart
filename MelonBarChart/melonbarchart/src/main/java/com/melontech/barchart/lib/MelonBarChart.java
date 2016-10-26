@@ -21,9 +21,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Set;
 
 public class MelonBarChart extends LinearLayout {
+
+    private static final int DEFAULT_FAKE_DATA_SET_SIZE = 10;
+    private static final double DEFAULT_FAKE_DATA_SET_MAX = 100;
 
     private static final long DEFAULT_BAR_ANIMATION_TIME = 1000;
     private static final long DEFAULT_LABEL_ANIMATION_TIME = 500;
@@ -42,6 +46,7 @@ public class MelonBarChart extends LinearLayout {
     FrameLayout labels;
     RecyclerView list;
     View blank;
+    TextView overlay;
 
     private Parameters params;
     private List<Double> values = new ArrayList<>();
@@ -50,6 +55,7 @@ public class MelonBarChart extends LinearLayout {
     private double scaleMax;
     private int barWidth;
     private boolean initialized = false;
+    private boolean fakeData = true;
     private Animation.AnimationListener animationListener;
 
     BarAdapter adapter;
@@ -80,6 +86,7 @@ public class MelonBarChart extends LinearLayout {
         labels = (FrameLayout) root.findViewById(R.id.labels);
         list = (RecyclerView) root.findViewById(R.id.list);
         blank = root.findViewById(R.id.blank);
+        overlay = (TextView) root.findViewById(R.id.overlay);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false) {
@@ -104,6 +111,7 @@ public class MelonBarChart extends LinearLayout {
                     chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
                 initialized = true;
+                fillInFakeData();
                 resetChart();
             }
         });
@@ -116,6 +124,7 @@ public class MelonBarChart extends LinearLayout {
 
         if (values.size() > 0 && initialized) {
             setTitle();
+            setEmptyOverlay();
             animationListener = new Animation.AnimationListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
@@ -143,6 +152,14 @@ public class MelonBarChart extends LinearLayout {
         title.setTextColor(params.titleColor);
     }
 
+    private void setEmptyOverlay() {
+        if (fakeData) {
+            overlay.setVisibility(VISIBLE);
+        } else {
+            overlay.setVisibility(INVISIBLE);
+        }
+    }
+
     private void constructBars(Animation.AnimationListener animationListener) {
 
         barWidth = calculateBarWidth();
@@ -166,8 +183,13 @@ public class MelonBarChart extends LinearLayout {
         adapter.setValues(values);
         adapter.setHighlightedBars(params.highlightedBars);
         list.setAdapter(adapter);
-
-        animateBars(DEFAULT_BAR_ANIMATION_TIME, grid.getMeasuredHeight(), animationListener);
+        if (fakeData) {
+            blank.setVisibility(View.GONE);
+            list.setVisibility(View.VISIBLE);
+            list.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        } else {
+            animateBars(DEFAULT_BAR_ANIMATION_TIME, grid.getMeasuredHeight(), animationListener);
+        }
     }
 
     private int calculateBarWidth() {
@@ -316,6 +338,13 @@ public class MelonBarChart extends LinearLayout {
         labels.startAnimation(alphaAnimation);
     }
 
+    private void validateValues() {
+        addZeroPadding();
+        trimDataSize();
+        getMinMax();
+        calculateScale();
+    }
+
     private void addZeroPadding() {
         if (params.fixedDataSetSize > 0) {
             while (this.values.size() < params.fixedDataSetSize) {
@@ -361,7 +390,8 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void calculateScale() {
-        scaleMax = params.scaleStep != 0 ? Util.ceil(maxValue, params.scaleStep) : maxValue * (1 + DEFAULT_SCALE_PADDING);
+        scaleMax = params.scaleStep != 0 ? Util.ceil(maxValue, params.scaleStep) : maxValue * (1
+                + DEFAULT_SCALE_PADDING);
         if (params.absoluteScaleMax != 0 && scaleMax > params.absoluteScaleMax) {
             scaleMax = params.absoluteScaleMax;
         }
@@ -498,16 +528,16 @@ public class MelonBarChart extends LinearLayout {
     }
 
     public void setValues(List<Double> values) {
+
+        fakeData = false;
+
         this.values.clear();
         params.labeledBars.clear();
         params.highlightedBars.clear();
 
         this.values.addAll(values);
 
-        addZeroPadding();
-        trimDataSize();
-        getMinMax();
-        calculateScale();
+        validateValues();
 
         resetChart();
     }
@@ -517,5 +547,18 @@ public class MelonBarChart extends LinearLayout {
         params.dashedLines.addAll(dashedLines);
 
         resetChart();
+    }
+
+    public void fillInFakeData() {
+        int size = params.fixedDataSetSize != 0 ? params.fixedDataSetSize :
+                DEFAULT_FAKE_DATA_SET_SIZE;
+        double max = params.minimumScaleMax != 0 ? params.minimumScaleMax :
+                DEFAULT_FAKE_DATA_SET_MAX;
+        Random random = new Random();
+        for (int i = 0; i < size; i++) {
+            values.add(random.nextDouble() * max);
+        }
+
+        validateValues();
     }
 }

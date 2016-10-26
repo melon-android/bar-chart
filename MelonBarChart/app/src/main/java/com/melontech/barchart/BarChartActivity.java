@@ -36,7 +36,7 @@ public class BarChartActivity extends AppCompatActivity {
         chart.setDashedGridLines(fillDashedLines());
 
         values = fillFakeData();
-        chart.setValues(values);
+        //chart.setValues(values);
     }
 
     private List<Double> fillFakeData() {
