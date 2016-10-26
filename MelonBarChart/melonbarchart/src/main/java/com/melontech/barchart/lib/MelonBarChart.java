@@ -293,7 +293,25 @@ public class MelonBarChart extends LinearLayout {
                     barHeight - textViewHeight - Util.dpToPx(params.labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
+            animateAlpha(textView, 500);
         }
+    }
+
+    private void animateAlpha(final View view, long duration){
+        Animation alphaAnimation = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                view.setAlpha(interpolatedTime);
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        alphaAnimation.setDuration(duration);
+        view.startAnimation(alphaAnimation);
     }
 
     private void addZeroPadding() {
