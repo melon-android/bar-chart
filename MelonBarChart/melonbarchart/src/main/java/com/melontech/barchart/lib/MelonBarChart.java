@@ -1,10 +1,8 @@
 package com.melontech.barchart.lib;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -115,6 +113,7 @@ public class MelonBarChart extends LinearLayout {
         labels.removeAllViews();
 
         if (values.size() > 0 && initialized) {
+            setTitle();
             animationListener = new Animation.AnimationListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
@@ -135,6 +134,11 @@ public class MelonBarChart extends LinearLayout {
             constructBars(animationListener);
             constructBackgroundGrid();
         }
+    }
+
+    private void setTitle() {
+        title.setText(params.title);
+        title.setTextColor(params.titleColor);
     }
 
     private void constructBars(Animation.AnimationListener animationListener) {
@@ -252,11 +256,13 @@ public class MelonBarChart extends LinearLayout {
                         subview = inflater.inflate(R.layout.view_dashed_line_segment, innerFrame,
                                 false);
                         subview.setLayoutParams(dashedLineParams);
+                        subview.setBackgroundColor(params.gridLineDashedColor);
                         innerFrame.addView(subview);
                     }
 
                 } else {
                     view = inflater.inflate(R.layout.view_grid_line, grid, false);
+                    view.findViewById(R.id.line).setBackgroundColor(params.gridLineColor);
                 }
                 view.setLayoutParams(lineParams);
                 grid.addView(view);
@@ -270,6 +276,8 @@ public class MelonBarChart extends LinearLayout {
         TextView textView;
         for (int position : params.labeledBars) {
             textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
+            textView.setTextColor(params.labelColor);
+            textView.setBackgroundColor(params.labelBackgroundColor);
             textView.setText(String.format(Locale.getDefault(), params.labelFormat, values.get
                     (position)));
             textView.measure(0, 0);
@@ -382,7 +390,10 @@ public class MelonBarChart extends LinearLayout {
             params.gridLineDashedColor = a.getColor(R.styleable
                             .MelonBarChart_grid_line_dashed_color,
                     DefaultParameters.gridLineDashedColor);
-
+            params.title = a.getString(R.styleable.MelonBarChart_title);
+            if (params.title == null) {
+                params.title = DefaultParameters.title;
+            }
             params.titleColor = a.getColor(R.styleable.MelonBarChart_title_color,
                     DefaultParameters.titleColor);
             params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
@@ -412,6 +423,7 @@ public class MelonBarChart extends LinearLayout {
 
         params.gridLineColor = DefaultParameters.gridLineColor;
         params.gridLineDashedColor = DefaultParameters.gridLineDashedColor;
+        params.title = DefaultParameters.title;
         params.titleColor = DefaultParameters.titleColor;
         params.labelColor = DefaultParameters.labelColor;
         params.labelBackgroundColor = DefaultParameters.labelBackgroundColor;
@@ -437,6 +449,7 @@ public class MelonBarChart extends LinearLayout {
 
         int gridLineColor;
         int gridLineDashedColor;
+        String title;
         int titleColor;
         int labelColor;
         int labelBackgroundColor;
@@ -456,8 +469,9 @@ public class MelonBarChart extends LinearLayout {
         static int barBackground = -1;
         static int highlightedBarBackground = -1;
 
-        static int gridLineColor = Color.parseColor("#1affffff");
-        static int gridLineDashedColor = Color.parseColor("#4dffffff");
+        static int gridLineColor = Color.parseColor("#2A454E");
+        static int gridLineDashedColor = Color.parseColor("#566C73");
+        static String title = "Title Placeholder";
         static int titleColor = Color.parseColor("#ffffff");
         static int labelColor = Color.parseColor("#ffffff");
         static int labelBackgroundColor = Color.parseColor("#0085b8");
