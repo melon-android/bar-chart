@@ -11,7 +11,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.melontech.barchart.BarChartActivity">
+    tools:context="com.melontech.barchart.BarChartActivity"
+    android:background="#15323C">
 
     <TextView
         android:layout_width="wrap_content"
