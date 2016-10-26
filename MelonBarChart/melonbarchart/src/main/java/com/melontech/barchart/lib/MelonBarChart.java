@@ -277,7 +277,7 @@ public class MelonBarChart extends LinearLayout {
         for (int position : params.labeledBars) {
             textView = (TextView) inflater.inflate(R.layout.view_label, labels, false);
             textView.setTextColor(params.labelColor);
-            textView.setBackgroundColor(params.labelBackgroundColor);
+            textView.setBackgroundResource(params.labelBackground);
             textView.setText(String.format(Locale.getDefault(), params.labelFormat, values.get
                     (position)));
             textView.measure(0, 0);
@@ -398,9 +398,8 @@ public class MelonBarChart extends LinearLayout {
                     DefaultParameters.titleColor);
             params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
                     DefaultParameters.labelColor);
-            params.labelBackgroundColor = a.getColor(R.styleable
-                            .MelonBarChart_label_background_color,
-                    DefaultParameters.labelBackgroundColor);
+            params.labelBackground = a.getResourceId(R.styleable.MelonBarChart_label_background,
+                    DefaultParameters.labelBackground);
         } finally {
             a.recycle();
         }
@@ -426,7 +425,7 @@ public class MelonBarChart extends LinearLayout {
         params.title = DefaultParameters.title;
         params.titleColor = DefaultParameters.titleColor;
         params.labelColor = DefaultParameters.labelColor;
-        params.labelBackgroundColor = DefaultParameters.labelBackgroundColor;
+        params.labelBackground = DefaultParameters.labelBackground;
 
         return params;
     }
@@ -452,7 +451,7 @@ public class MelonBarChart extends LinearLayout {
         String title;
         int titleColor;
         int labelColor;
-        int labelBackgroundColor;
+        int labelBackground;
 
     }
 
@@ -474,7 +473,7 @@ public class MelonBarChart extends LinearLayout {
         static String title = "Title Placeholder";
         static int titleColor = Color.parseColor("#ffffff");
         static int labelColor = Color.parseColor("#ffffff");
-        static int labelBackgroundColor = Color.parseColor("#0085b8");
+        static int labelBackground = R.drawable.label_frame;
     }
 
     public void setValues(List<Double> values) {
