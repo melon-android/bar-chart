@@ -7,7 +7,6 @@ import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +48,7 @@ public class MelonBarChart extends LinearLayout {
     private double currentScaleMax;
     private int barWidth;
     private boolean initialized = false;
+    private Animation.AnimationListener animationListener;
 
     BarAdapter adapter;
 
@@ -118,13 +118,13 @@ public class MelonBarChart extends LinearLayout {
 
     private void initializeChart() {
 
+        animationListener = null;
+
         barWidth = calculateBarWidth();
-        Log.d("zxc", "barWidth " + barWidth);
         resizeChart(barWidth);
 
         adapter = new BarAdapter(barWidth, currentScaleMax);
 
-        Log.d("zxc", "valSize: " + values.size());
         adapter.setValues(values);
 
         params.highlightedBars.add(minPos);
@@ -137,7 +137,7 @@ public class MelonBarChart extends LinearLayout {
 
         list.setAdapter(adapter);
 
-        animateChart(1000, list.getMeasuredHeight());
+        animateChart(1000, grid.getMeasuredHeight());
     }
 
     private int calculateBarWidth() {
@@ -151,7 +151,6 @@ public class MelonBarChart extends LinearLayout {
         chart.getLayoutParams().width = newChartWidth + ((FrameLayout.LayoutParams) frame
                 .getLayoutParams()).leftMargin + ((FrameLayout.LayoutParams) frame
                 .getLayoutParams()).rightMargin;
-        Log.d("zxc", "chart.getLayoutParams().width " + chart.getLayoutParams().width);
     }
 
     private void addZeroPadding() {
@@ -399,7 +398,7 @@ public class MelonBarChart extends LinearLayout {
         blankAnimation.setDuration(duration);
         blank.startAnimation(blankAnimation);
 
-        blankAnimation.setAnimationListener(new Animation.AnimationListener() {
+        animationListener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 clearLabels();
@@ -407,12 +406,15 @@ public class MelonBarChart extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                constructLabels();
+                if(animationListener == this) {
+                    constructLabels();
+                }
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
-        });
+        };
+        blankAnimation.setAnimationListener(animationListener);
     }
 }
