@@ -22,5 +22,10 @@
         <attr name="title" format="string"/>
         <attr name="title_color" format="color" />
 
+        <attr name="overlay_text" format="string"/>
+        <attr name="overlay_text_color" format="color"/>
+        <attr name="overlay_background_color" format="color"/>
+        <attr name="overlay_background_opacity" format="float"/>
+
     </declare-styleable>
 </resources>

@@ -155,6 +155,11 @@ public class MelonBarChart extends LinearLayout {
     private void setEmptyOverlay() {
         if (fakeData) {
             overlay.setVisibility(VISIBLE);
+            overlay.setText(params.overlayText);
+            overlay.setTextColor(params.overlayTextColor);
+            overlay.setBackgroundColor(Color.argb((int) (255 * params.overlayBackgroundOpacity),
+                    Color.red(params.overlayBackgroundColor), Color.green(params
+                            .overlayBackgroundColor), Color.blue(params.overlayBackgroundColor)));
         } else {
             overlay.setVisibility(INVISIBLE);
         }
@@ -453,6 +458,19 @@ public class MelonBarChart extends LinearLayout {
             params.titleColor = a.getColor(R.styleable.MelonBarChart_title_color,
                     DefaultParameters.titleColor);
 
+            params.overlayText = a.getString(R.styleable.MelonBarChart_overlay_text);
+            if (params.overlayText == null) {
+                params.overlayText = DefaultParameters.overlayText;
+            }
+            params.overlayTextColor = a.getColor(R.styleable.MelonBarChart_overlay_text_color,
+                    DefaultParameters.overlayTextColor);
+            params.overlayBackgroundColor = a.getColor(R.styleable
+                    .MelonBarChart_overlay_background_color, DefaultParameters
+                    .overlayBackgroundColor);
+            params.overlayBackgroundOpacity = a.getFloat(R.styleable
+                    .MelonBarChart_overlay_background_opacity, DefaultParameters
+                    .overlayBackgroundOpacity);
+
         } finally {
             a.recycle();
         }
@@ -483,6 +501,10 @@ public class MelonBarChart extends LinearLayout {
         params.title = DefaultParameters.title;
         params.titleColor = DefaultParameters.titleColor;
 
+        params.overlayText = DefaultParameters.overlayText;
+        params.overlayTextColor = DefaultParameters.overlayTextColor;
+        params.overlayBackgroundColor = DefaultParameters.overlayBackgroundColor;
+        params.overlayBackgroundOpacity = DefaultParameters.overlayBackgroundOpacity;
 
         return params;
     }
@@ -508,6 +530,11 @@ public class MelonBarChart extends LinearLayout {
 
         String title;
         int titleColor;
+
+        String overlayText;
+        int overlayTextColor;
+        int overlayBackgroundColor;
+        float overlayBackgroundOpacity;
 
         Set<Integer> dashedLines = new HashSet<>();
         Set<Integer> highlightedBars = new HashSet<>();
@@ -536,6 +563,12 @@ public class MelonBarChart extends LinearLayout {
 
         static String title = "Title Placeholder";
         static int titleColor = Color.parseColor("#ffffff");
+
+        static String overlayText = "We currently don't have enough data to show your graph. Just" +
+                " wait for it while using the application.";
+        static int overlayTextColor = Color.parseColor("#ffffff");
+        static int overlayBackgroundColor = Color.parseColor("#15323C");
+        static float overlayBackgroundOpacity = 0.9f;
 
     }
 

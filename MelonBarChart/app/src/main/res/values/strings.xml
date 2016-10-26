@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Melon Bar Chart</string>
     <string name="label_format">%.2fh</string>
+    <string name="overlay_text">We currently don\'t have enough data to show your graph. Just wait for it while using the application.</string>
 </resources>
