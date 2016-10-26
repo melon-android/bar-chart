@@ -97,8 +97,8 @@ public class MelonBarChart extends LinearLayout {
         };
         list.setLayoutManager(layoutManager);
 
-        params = attributeSet != null ? getAtttributeParameters(context, attributeSet) :
-                getDefaultParameters();
+        params = attributeSet != null ? getAtttributeParameters(context, attributeSet) : 
+                DefaultParameters.instance;
 
         chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
                 .OnGlobalLayoutListener() {
@@ -411,41 +411,42 @@ public class MelonBarChart extends LinearLayout {
         Parameters params = new Parameters();
         try {
             params.fixedDataSetSize = a.getInteger(R.styleable.MelonBarChart_fixed_data_set_size,
-                    DefaultParameters.fixedDataSetSize);
+                    DefaultParameters.instance.fixedDataSetSize);
             params.scaleStep = a.getFloat(R.styleable.MelonBarChart_scale_step, DefaultParameters
-                    .scaleStep);
+                    .instance.scaleStep);
             params.absoluteScaleMax = a.getFloat(R.styleable
-                    .MelonBarChart_absolute_scale_maximum, DefaultParameters.absoluteScaleMax);
+                    .MelonBarChart_absolute_scale_maximum, DefaultParameters.instance
+                    .absoluteScaleMax);
             params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_scale_maximum,
-                    DefaultParameters.minimumScaleMax);
+                    DefaultParameters.instance.minimumScaleMax);
 
             params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
-                    DefaultParameters.labelColor);
+                    DefaultParameters.instance.labelColor);
             params.labelBackground = a.getResourceId(R.styleable.MelonBarChart_label_background,
-                    DefaultParameters.labelBackground);
+                    DefaultParameters.instance.labelBackground);
             params.labelMarginBottom = a.getDimensionPixelSize(R.styleable
-                    .MelonBarChart_label_margin_bottom, Util.dpToPx(DefaultParameters
+                    .MelonBarChart_label_margin_bottom, Util.dpToPx(DefaultParameters.instance
                     .labelMarginBottom));
             params.labelFormat = a.getString(R.styleable.MelonBarChart_label_format);
             if (params.labelFormat == null) {
-                params.labelFormat = DefaultParameters.labelFormat;
+                params.labelFormat = DefaultParameters.instance.labelFormat;
             }
 
             params.gridLineColor = a.getColor(R.styleable.MelonBarChart_grid_line_color,
-                    DefaultParameters.gridLineColor);
+                    DefaultParameters.instance.gridLineColor);
             params.gridLineDashedColor = a.getColor(R.styleable
-                            .MelonBarChart_grid_line_dashed_color,
-                    DefaultParameters.gridLineDashedColor);
+                    .MelonBarChart_grid_line_dashed_color, DefaultParameters.instance
+                    .gridLineDashedColor);
 
             params.barAccentHeight = a.getDimensionPixelSize(R.styleable
                     .MelonBarChart_bar_accent_height, -1);
             if (params.barAccentHeight == -1) {
-                params.barAccentHeight = DefaultParameters.barAccentHeight;
+                params.barAccentHeight = DefaultParameters.instance.barAccentHeight;
             } else {
                 params.barAccentHeight = Util.pxToDp(params.barAccentHeight);
             }
             params.barAccentColor = a.getColor(R.styleable.MelonBarChart_bar_accent_color,
-                    DefaultParameters.barAccentColor);
+                    DefaultParameters.instance.barAccentColor);
             params.barBackground = a.getResourceId(R.styleable.MelonBarChart_bar_background, R
                     .drawable.normal_bar);
             params.highlightedBarBackground = a.getResourceId(R.styleable
@@ -453,123 +454,28 @@ public class MelonBarChart extends LinearLayout {
 
             params.title = a.getString(R.styleable.MelonBarChart_title);
             if (params.title == null) {
-                params.title = DefaultParameters.title;
+                params.title = DefaultParameters.instance.title;
             }
             params.titleColor = a.getColor(R.styleable.MelonBarChart_title_color,
-                    DefaultParameters.titleColor);
+                    DefaultParameters.instance.titleColor);
 
             params.overlayText = a.getString(R.styleable.MelonBarChart_overlay_text);
             if (params.overlayText == null) {
-                params.overlayText = DefaultParameters.overlayText;
+                params.overlayText = DefaultParameters.instance.overlayText;
             }
             params.overlayTextColor = a.getColor(R.styleable.MelonBarChart_overlay_text_color,
-                    DefaultParameters.overlayTextColor);
+                    DefaultParameters.instance.overlayTextColor);
             params.overlayBackgroundColor = a.getColor(R.styleable
-                    .MelonBarChart_overlay_background_color, DefaultParameters
+                    .MelonBarChart_overlay_background_color, DefaultParameters.instance
                     .overlayBackgroundColor);
             params.overlayBackgroundOpacity = a.getFloat(R.styleable
-                    .MelonBarChart_overlay_background_opacity, DefaultParameters
+                    .MelonBarChart_overlay_background_opacity, DefaultParameters.instance
                     .overlayBackgroundOpacity);
 
         } finally {
             a.recycle();
         }
         return params;
-    }
-
-    private Parameters getDefaultParameters() {
-        Parameters params = new Parameters();
-
-        params.fixedDataSetSize = DefaultParameters.fixedDataSetSize;
-        params.scaleStep = DefaultParameters.scaleStep;
-        params.absoluteScaleMax = DefaultParameters.absoluteScaleMax;
-        params.minimumScaleMax = DefaultParameters.minimumScaleMax;
-
-        params.labelColor = DefaultParameters.labelColor;
-        params.labelBackground = DefaultParameters.labelBackground;
-        params.labelMarginBottom = Util.dpToPx(DefaultParameters.labelMarginBottom);
-        params.labelFormat = DefaultParameters.labelFormat;
-
-        params.gridLineColor = DefaultParameters.gridLineColor;
-        params.gridLineDashedColor = DefaultParameters.gridLineDashedColor;
-
-        params.barAccentHeight = Util.dpToPx(DefaultParameters.barAccentHeight);
-        params.barAccentColor = DefaultParameters.barAccentColor;
-        params.barBackground = DefaultParameters.barBackground;
-        params.highlightedBarBackground = DefaultParameters.highlightedBarBackground;
-
-        params.title = DefaultParameters.title;
-        params.titleColor = DefaultParameters.titleColor;
-
-        params.overlayText = DefaultParameters.overlayText;
-        params.overlayTextColor = DefaultParameters.overlayTextColor;
-        params.overlayBackgroundColor = DefaultParameters.overlayBackgroundColor;
-        params.overlayBackgroundOpacity = DefaultParameters.overlayBackgroundOpacity;
-
-        return params;
-    }
-
-    class Parameters {
-        int fixedDataSetSize;
-        float scaleStep;
-        float absoluteScaleMax;
-        float minimumScaleMax;
-
-        int barAccentHeight;
-        int barAccentColor;
-        int barBackground;
-        int highlightedBarBackground;
-
-        int gridLineColor;
-        int gridLineDashedColor;
-
-        int labelColor;
-        int labelBackground;
-        int labelMarginBottom;
-        String labelFormat;
-
-        String title;
-        int titleColor;
-
-        String overlayText;
-        int overlayTextColor;
-        int overlayBackgroundColor;
-        float overlayBackgroundOpacity;
-
-        Set<Integer> dashedLines = new HashSet<>();
-        Set<Integer> highlightedBars = new HashSet<>();
-        Set<Integer> labeledBars = new HashSet<>();
-
-    }
-
-    static class DefaultParameters {
-        static final int fixedDataSetSize = 0;
-        static final float scaleStep = 0f;
-        static final float absoluteScaleMax = 0f;
-        static final float minimumScaleMax = 0f;
-
-        static int labelColor = Color.parseColor("#ffffff");
-        static int labelBackground = R.drawable.label_frame;
-        static final int labelMarginBottom = 2;
-        static final String labelFormat = "%.2d";
-
-        static int gridLineColor = Color.parseColor("#2A454E");
-        static int gridLineDashedColor = Color.parseColor("#566C73");
-
-        static int barAccentHeight = -1;
-        static int barAccentColor = -1;
-        static int barBackground = -1;
-        static int highlightedBarBackground = -1;
-
-        static String title = "Title Placeholder";
-        static int titleColor = Color.parseColor("#ffffff");
-
-        static String overlayText = "We currently don't have enough data to show your graph. Just" +
-                " wait for it while using the application.";
-        static int overlayTextColor = Color.parseColor("#ffffff");
-        static int overlayBackgroundColor = Color.parseColor("#15323C");
-        static float overlayBackgroundOpacity = 0.9f;
-
     }
 
     public void setValues(List<Double> values) {
