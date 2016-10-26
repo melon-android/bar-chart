@@ -3,6 +3,8 @@ package com.melontech.barchart.lib;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,6 +143,20 @@ public class MelonBarChart extends LinearLayout {
         resizeChart(barWidth);
 
         adapter = new BarAdapter(barWidth, scaleMax);
+
+        if (params.barAccentColor != -1) {
+            adapter.setAccentColor(params.barAccentColor);
+        }
+        if (params.barAccentHeight != -1) {
+            adapter.setAccentHeight(params.barAccentHeight);
+        }
+        if (params.barBackground != -1) {
+            adapter.setBarBackground(params.barBackground);
+        }
+        if (params.highlightedBarBackground != -1) {
+            adapter.setHighligtedBarBackground(params.highlightedBarBackground);
+        }
+
         adapter.setValues(values);
         adapter.setHighlightedBars(params.highlightedBars);
         list.setAdapter(adapter);
@@ -224,7 +240,7 @@ public class MelonBarChart extends LinearLayout {
                     (LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
             LinearLayout.LayoutParams dashedLineParams = new LinearLayout.LayoutParams(0,
                     LayoutParams.MATCH_PARENT, 1);
-            dashedLineParams.setMargins(dpToPx(DASHED_LINE_MARGIN_LEFT), 0, dpToPx
+            dashedLineParams.setMargins(Util.dpToPx(DASHED_LINE_MARGIN_LEFT), 0, Util.dpToPx
                     (DASHED_LINE_MARGIN_RIGHT), 0);
 
             View view, subview;
@@ -263,10 +279,10 @@ public class MelonBarChart extends LinearLayout {
                     .getMeasuredHeight();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(position * barWidth + dpToPx(SIDE_BAR_MARGIN) + Math.round
+            layoutParams.setMargins(position * barWidth + Util.dpToPx(SIDE_BAR_MARGIN) + Math.round
                     (barWidth / 2f) - Math.round(textViewWidth / 2f) + ((FrameLayout
                     .LayoutParams) frame.getLayoutParams()).leftMargin, chart.getMeasuredHeight() -
-                    barHeight - textViewHeight - dpToPx(params.labelMarginBottom), 0, 0);
+                    barHeight - textViewHeight - Util.dpToPx(params.labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }
@@ -315,7 +331,7 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void calculateScale() {
-        scaleMax = params.scaleStep != 0 ? ceil(max, params.scaleStep) : max * (1 +
+        scaleMax = params.scaleStep != 0 ? Util.ceil(max, params.scaleStep) : max * (1 +
                 DEFAULT_SCALE_PADDING);
         if (params.absoluteScaleMax != 0 && scaleMax > params.absoluteScaleMax) {
             scaleMax = params.absoluteScaleMax;
@@ -339,12 +355,41 @@ public class MelonBarChart extends LinearLayout {
             params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_sclae_maximum,
                     DefaultParameters.minimumScaleMax);
             params.labelMarginBottom = a.getDimensionPixelSize(R.styleable
-                    .MelonBarChart_label_margin_bottom, dpToPx(DefaultParameters
+                    .MelonBarChart_label_margin_bottom, Util.dpToPx(DefaultParameters
                     .labelMarginBottom));
             params.labelFormat = a.getString(R.styleable.MelonBarChart_labem_format);
             if (params.labelFormat == null) {
                 params.labelFormat = DefaultParameters.labelFormat;
             }
+
+            params.barAccentHeight = a.getDimensionPixelSize(R.styleable
+                    .MelonBarChart_bar_accent_height, -1);
+            if (params.barAccentHeight == -1) {
+                params.barAccentHeight = DefaultParameters.barAccentHeight;
+            } else {
+                params.barAccentHeight = Util.pxToDp(params.barAccentHeight);
+            }
+            params.barAccentColor = a.getColor(R.styleable.MelonBarChart_bar_accent_color,
+                    DefaultParameters.barAccentColor);
+            params.barBackground = a.getResourceId(R.styleable.MelonBarChart_bar_background, R
+                    .drawable.normal_bar);
+            params.highlightedBarBackground = a.getResourceId(R.styleable
+                    .MelonBarChart_highlighted_bar_background, R.drawable.highlighted_bar);
+
+
+            params.gridLineColor = a.getColor(R.styleable.MelonBarChart_grid_line_color,
+                    DefaultParameters.gridLineColor);
+            params.gridLineDashedColor = a.getColor(R.styleable
+                            .MelonBarChart_grid_line_dashed_color,
+                    DefaultParameters.gridLineDashedColor);
+
+            params.titleColor = a.getColor(R.styleable.MelonBarChart_title_color,
+                    DefaultParameters.titleColor);
+            params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
+                    DefaultParameters.labelColor);
+            params.labelBackgroundColor = a.getColor(R.styleable
+                            .MelonBarChart_label_background_color,
+                    DefaultParameters.labelBackgroundColor);
         } finally {
             a.recycle();
         }
@@ -357,8 +402,20 @@ public class MelonBarChart extends LinearLayout {
         params.scaleStep = DefaultParameters.scaleStep;
         params.absoluteScaleMax = DefaultParameters.absoluteScaleMax;
         params.minimumScaleMax = DefaultParameters.minimumScaleMax;
-        params.labelMarginBottom = dpToPx(DefaultParameters.labelMarginBottom);
+        params.labelMarginBottom = Util.dpToPx(DefaultParameters.labelMarginBottom);
         params.labelFormat = DefaultParameters.labelFormat;
+
+        params.barAccentHeight = Util.dpToPx(DefaultParameters.barAccentHeight);
+        params.barAccentColor = DefaultParameters.barAccentColor;
+        params.barBackground = DefaultParameters.barBackground;
+        params.highlightedBarBackground = DefaultParameters.highlightedBarBackground;
+
+        params.gridLineColor = DefaultParameters.gridLineColor;
+        params.gridLineDashedColor = DefaultParameters.gridLineDashedColor;
+        params.titleColor = DefaultParameters.titleColor;
+        params.labelColor = DefaultParameters.labelColor;
+        params.labelBackgroundColor = DefaultParameters.labelBackgroundColor;
+
         return params;
     }
 
@@ -372,6 +429,18 @@ public class MelonBarChart extends LinearLayout {
         Set<Integer> dashedLines = new HashSet<>();
         Set<Integer> highlightedBars = new HashSet<>();
         Set<Integer> labeledBars = new HashSet<>();
+
+        int barAccentHeight;
+        int barAccentColor;
+        int barBackground;
+        int highlightedBarBackground;
+
+        int gridLineColor;
+        int gridLineDashedColor;
+        int titleColor;
+        int labelColor;
+        int labelBackgroundColor;
+
     }
 
     static class DefaultParameters {
@@ -381,6 +450,17 @@ public class MelonBarChart extends LinearLayout {
         static final float minimumScaleMax = 0f;
         static final int labelMarginBottom = 2;
         static final String labelFormat = "%.2d";
+
+        static int barAccentHeight = -1;
+        static int barAccentColor = -1;
+        static int barBackground = -1;
+        static int highlightedBarBackground = -1;
+
+        static int gridLineColor = Color.parseColor("#1affffff");
+        static int gridLineDashedColor = Color.parseColor("#4dffffff");
+        static int titleColor = Color.parseColor("#ffffff");
+        static int labelColor = Color.parseColor("#ffffff");
+        static int labelBackgroundColor = Color.parseColor("#0085b8");
     }
 
     public void setValues(List<Double> values) {
@@ -403,13 +483,5 @@ public class MelonBarChart extends LinearLayout {
         params.dashedLines.addAll(dashedLines);
 
         resetChart();
-    }
-
-    private int dpToPx(int dp) {
-        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    private double ceil(double input, double step) {
-        return Math.ceil(input / step) * step;
     }
 }

@@ -7,5 +7,17 @@
         <attr name="minimum_sclae_maximum" format="float"/>
         <attr name="label_margin_bottom" format="dimension"/>
         <attr name="labem_format" format="string"/>
+
+        <attr name="bar_accent_height" format="dimension"/>
+        <attr name="bar_accent_color" format="color"/>
+
+        <attr name="grid_line_color" format="color"/>
+        <attr name="grid_line_dashed_color" format="color" />
+        <attr name="bar_background" format="reference"/>
+        <attr name="highlighted_bar_background" format="reference"/>
+        <attr name="title_color" format="color" />
+        <attr name="label_color" format="color" />
+        <attr name="label_background_color" format="color" />
+
     </declare-styleable>
 </resources>
