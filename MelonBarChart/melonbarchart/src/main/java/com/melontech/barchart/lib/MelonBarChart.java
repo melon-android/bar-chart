@@ -360,12 +360,12 @@ public class MelonBarChart extends LinearLayout {
                     .scaleStep);
             params.absoluteScaleMax = a.getFloat(R.styleable
                     .MelonBarChart_absolute_scale_maximum, DefaultParameters.absoluteScaleMax);
-            params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_sclae_maximum,
+            params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_scale_maximum,
                     DefaultParameters.minimumScaleMax);
             params.labelMarginBottom = a.getDimensionPixelSize(R.styleable
                     .MelonBarChart_label_margin_bottom, Util.dpToPx(DefaultParameters
                     .labelMarginBottom));
-            params.labelFormat = a.getString(R.styleable.MelonBarChart_labem_format);
+            params.labelFormat = a.getString(R.styleable.MelonBarChart_label_format);
             if (params.labelFormat == null) {
                 params.labelFormat = DefaultParameters.labelFormat;
             }

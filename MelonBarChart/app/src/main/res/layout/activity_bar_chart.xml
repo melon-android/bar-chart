@@ -27,8 +27,8 @@
         custom:fixed_data_set_size="30"
         custom:scale_step="2"
         custom:label_margin_bottom="1dp"
-        custom:labem_format="@string/label_format"
-        custom:minimum_sclae_maximum="12.0"/>
+        custom:label_format="@string/label_format"
+        custom:minimum_scale_maximum="12.0"/>
 
     <Button
         android:id="@+id/animate"

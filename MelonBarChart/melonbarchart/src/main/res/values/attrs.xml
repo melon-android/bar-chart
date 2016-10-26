@@ -4,9 +4,9 @@
         <attr name="fixed_data_set_size" format="integer"/>
         <attr name="scale_step" format="float"/>
         <attr name="absolute_scale_maximum" format="float"/>
-        <attr name="minimum_sclae_maximum" format="float"/>
+        <attr name="minimum_scale_maximum" format="float"/>
         <attr name="label_margin_bottom" format="dimension"/>
-        <attr name="labem_format" format="string"/>
+        <attr name="label_format" format="string"/>
 
         <attr name="bar_accent_height" format="dimension"/>
         <attr name="bar_accent_color" format="color"/>
