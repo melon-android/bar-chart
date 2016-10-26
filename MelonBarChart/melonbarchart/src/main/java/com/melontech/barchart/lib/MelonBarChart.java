@@ -25,6 +25,9 @@ import java.util.Set;
 
 public class MelonBarChart extends LinearLayout {
 
+    private static final long DEFAULT_BAR_ANIMATION_TIME = 1000;
+    private static final long DEFAULT_LABEL_ANIMATION_TIME = 500;
+
     private static final double DEFAULT_SCALE_PADDING = 0.2;
 
     private static final int DASHED_LINE_MARGIN_LEFT = 2;
@@ -165,7 +168,7 @@ public class MelonBarChart extends LinearLayout {
         adapter.setHighlightedBars(params.highlightedBars);
         list.setAdapter(adapter);
 
-        animateBars(1000, grid.getMeasuredHeight(), animationListener);
+        animateBars(DEFAULT_BAR_ANIMATION_TIME, grid.getMeasuredHeight(), animationListener);
     }
 
     private int calculateBarWidth() {
@@ -293,11 +296,11 @@ public class MelonBarChart extends LinearLayout {
                     barHeight - textViewHeight - Util.dpToPx(params.labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
-            animateAlpha(textView, 500);
+            animateAlpha(textView, DEFAULT_LABEL_ANIMATION_TIME);
         }
     }
 
-    private void animateAlpha(final View view, long duration){
+    private void animateAlpha(final View view, long duration) {
         Animation alphaAnimation = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
