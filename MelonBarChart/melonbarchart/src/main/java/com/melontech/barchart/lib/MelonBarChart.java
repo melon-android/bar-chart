@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -97,7 +96,7 @@ public class MelonBarChart extends LinearLayout {
         };
         list.setLayoutManager(layoutManager);
 
-        params = attributeSet != null ? getAtttributeParameters(context, attributeSet) : 
+        params = attributeSet != null ? getAtttributeParameters(context, attributeSet) :
                 DefaultParameters.instance;
 
         chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
@@ -316,10 +315,10 @@ public class MelonBarChart extends LinearLayout {
                     .getMeasuredHeight();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(position * barWidth + Util.dpToPx(SIDE_BAR_MARGIN) + Math.round
-                    (barWidth / 2f) - Math.round(textViewWidth / 2f) + ((FrameLayout
-                    .LayoutParams) frame.getLayoutParams()).leftMargin, chart.getMeasuredHeight() -
-                    barHeight - textViewHeight - Util.dpToPx(params.labelMarginBottom), 0, 0);
+            layoutParams.setMargins(position * barWidth + Math.round(Util.dpToPx(SIDE_BAR_MARGIN)
+                    / 2f) - Math.round((textViewWidth - barWidth) / 2f) + ((FrameLayout
+                    .LayoutParams) frame.getLayoutParams()).leftMargin, chart.getMeasuredHeight()
+                    - barHeight - textViewHeight - Util.dpToPx(params.labelMarginBottom), 0, 0);
             textView.setLayoutParams(layoutParams);
             labels.addView(textView);
         }
