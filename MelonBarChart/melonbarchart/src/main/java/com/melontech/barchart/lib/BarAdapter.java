@@ -84,8 +84,10 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         holder.positive.setBackgroundResource(highlightedBars.contains(position) ? R.drawable
                 .highlighted_bar : R.drawable.normal_bar);
 
-        double resolvedPositiveValue = Math.min(scaleMax, values.get(position).doubleValue());
-        double resolvedNegativeValue = scaleMax - resolvedPositiveValue;
+        double roundedScaleMax = round(scaleMax, 0.01);
+
+        double resolvedPositiveValue = Math.min(roundedScaleMax, round(values.get(position), 0.01));
+        double resolvedNegativeValue = roundedScaleMax - resolvedPositiveValue;
 
         setWeight((float) resolvedPositiveValue, holder.positive);
         setWeight((float) resolvedNegativeValue, holder.negative);
@@ -114,5 +116,9 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
             positive = itemView.findViewById(R.id.positive);
             negative = itemView.findViewById(R.id.negative);
         }
+    }
+
+    private double round(double val, double step) {
+        return Math.round(val / step) * step;
     }
 }
