@@ -1,13 +1,10 @@
 package com.melontech.barchart.lib;
 
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -20,12 +17,6 @@ import java.util.Set;
  */
 
 public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
-
-    private static final long ANIMATION_END_BUFFER = 200;
-
-    private static final long DEFAULT_ANIMTION_DURATION = 1000;
-
-    private long animationDuration = DEFAULT_ANIMTION_DURATION;
 
     private int barWidth;
 
@@ -46,10 +37,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     public BarAdapter(int barWidth, double scaleMax) {
         this(null, barWidth, scaleMax);
-    }
-
-    public void setAnimationDuration(long animationDuration) {
-        this.animationDuration = animationDuration;
     }
 
     public void setValues(List<Double> values) {
@@ -85,7 +72,6 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
                 .highlighted_bar : R.drawable.normal_bar);
 
         double roundedScaleMax = round(scaleMax, 0.01);
-
         double resolvedPositiveValue = Math.min(roundedScaleMax, round(values.get(position), 0.01));
         double resolvedNegativeValue = roundedScaleMax - resolvedPositiveValue;
 
