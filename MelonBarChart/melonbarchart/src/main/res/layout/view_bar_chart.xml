@@ -77,7 +77,7 @@
         android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#8815323C"
+        android:background="#EE15323C"
         android:textColor="#FFFFFF"
         android:text="We currently don't have enough data to show your graph. Just wait for it while using the application."/>
 </FrameLayout>

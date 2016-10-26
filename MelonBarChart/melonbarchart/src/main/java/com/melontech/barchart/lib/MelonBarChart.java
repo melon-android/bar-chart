@@ -413,6 +413,11 @@ public class MelonBarChart extends LinearLayout {
                     .MelonBarChart_absolute_scale_maximum, DefaultParameters.absoluteScaleMax);
             params.minimumScaleMax = a.getFloat(R.styleable.MelonBarChart_minimum_scale_maximum,
                     DefaultParameters.minimumScaleMax);
+
+            params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
+                    DefaultParameters.labelColor);
+            params.labelBackground = a.getResourceId(R.styleable.MelonBarChart_label_background,
+                    DefaultParameters.labelBackground);
             params.labelMarginBottom = a.getDimensionPixelSize(R.styleable
                     .MelonBarChart_label_margin_bottom, Util.dpToPx(DefaultParameters
                     .labelMarginBottom));
@@ -420,6 +425,12 @@ public class MelonBarChart extends LinearLayout {
             if (params.labelFormat == null) {
                 params.labelFormat = DefaultParameters.labelFormat;
             }
+
+            params.gridLineColor = a.getColor(R.styleable.MelonBarChart_grid_line_color,
+                    DefaultParameters.gridLineColor);
+            params.gridLineDashedColor = a.getColor(R.styleable
+                            .MelonBarChart_grid_line_dashed_color,
+                    DefaultParameters.gridLineDashedColor);
 
             params.barAccentHeight = a.getDimensionPixelSize(R.styleable
                     .MelonBarChart_bar_accent_height, -1);
@@ -435,22 +446,13 @@ public class MelonBarChart extends LinearLayout {
             params.highlightedBarBackground = a.getResourceId(R.styleable
                     .MelonBarChart_highlighted_bar_background, R.drawable.highlighted_bar);
 
-
-            params.gridLineColor = a.getColor(R.styleable.MelonBarChart_grid_line_color,
-                    DefaultParameters.gridLineColor);
-            params.gridLineDashedColor = a.getColor(R.styleable
-                            .MelonBarChart_grid_line_dashed_color,
-                    DefaultParameters.gridLineDashedColor);
             params.title = a.getString(R.styleable.MelonBarChart_title);
             if (params.title == null) {
                 params.title = DefaultParameters.title;
             }
             params.titleColor = a.getColor(R.styleable.MelonBarChart_title_color,
                     DefaultParameters.titleColor);
-            params.labelColor = a.getColor(R.styleable.MelonBarChart_label_color,
-                    DefaultParameters.labelColor);
-            params.labelBackground = a.getResourceId(R.styleable.MelonBarChart_label_background,
-                    DefaultParameters.labelBackground);
+
         } finally {
             a.recycle();
         }
@@ -459,24 +461,28 @@ public class MelonBarChart extends LinearLayout {
 
     private Parameters getDefaultParameters() {
         Parameters params = new Parameters();
+
         params.fixedDataSetSize = DefaultParameters.fixedDataSetSize;
         params.scaleStep = DefaultParameters.scaleStep;
         params.absoluteScaleMax = DefaultParameters.absoluteScaleMax;
         params.minimumScaleMax = DefaultParameters.minimumScaleMax;
+
+        params.labelColor = DefaultParameters.labelColor;
+        params.labelBackground = DefaultParameters.labelBackground;
         params.labelMarginBottom = Util.dpToPx(DefaultParameters.labelMarginBottom);
         params.labelFormat = DefaultParameters.labelFormat;
+
+        params.gridLineColor = DefaultParameters.gridLineColor;
+        params.gridLineDashedColor = DefaultParameters.gridLineDashedColor;
 
         params.barAccentHeight = Util.dpToPx(DefaultParameters.barAccentHeight);
         params.barAccentColor = DefaultParameters.barAccentColor;
         params.barBackground = DefaultParameters.barBackground;
         params.highlightedBarBackground = DefaultParameters.highlightedBarBackground;
 
-        params.gridLineColor = DefaultParameters.gridLineColor;
-        params.gridLineDashedColor = DefaultParameters.gridLineDashedColor;
         params.title = DefaultParameters.title;
         params.titleColor = DefaultParameters.titleColor;
-        params.labelColor = DefaultParameters.labelColor;
-        params.labelBackground = DefaultParameters.labelBackground;
+
 
         return params;
     }
@@ -486,11 +492,6 @@ public class MelonBarChart extends LinearLayout {
         float scaleStep;
         float absoluteScaleMax;
         float minimumScaleMax;
-        int labelMarginBottom;
-        String labelFormat;
-        Set<Integer> dashedLines = new HashSet<>();
-        Set<Integer> highlightedBars = new HashSet<>();
-        Set<Integer> labeledBars = new HashSet<>();
 
         int barAccentHeight;
         int barAccentColor;
@@ -499,10 +500,18 @@ public class MelonBarChart extends LinearLayout {
 
         int gridLineColor;
         int gridLineDashedColor;
-        String title;
-        int titleColor;
+
         int labelColor;
         int labelBackground;
+        int labelMarginBottom;
+        String labelFormat;
+
+        String title;
+        int titleColor;
+
+        Set<Integer> dashedLines = new HashSet<>();
+        Set<Integer> highlightedBars = new HashSet<>();
+        Set<Integer> labeledBars = new HashSet<>();
 
     }
 
@@ -511,20 +520,23 @@ public class MelonBarChart extends LinearLayout {
         static final float scaleStep = 0f;
         static final float absoluteScaleMax = 0f;
         static final float minimumScaleMax = 0f;
+
+        static int labelColor = Color.parseColor("#ffffff");
+        static int labelBackground = R.drawable.label_frame;
         static final int labelMarginBottom = 2;
         static final String labelFormat = "%.2d";
+
+        static int gridLineColor = Color.parseColor("#2A454E");
+        static int gridLineDashedColor = Color.parseColor("#566C73");
 
         static int barAccentHeight = -1;
         static int barAccentColor = -1;
         static int barBackground = -1;
         static int highlightedBarBackground = -1;
 
-        static int gridLineColor = Color.parseColor("#2A454E");
-        static int gridLineDashedColor = Color.parseColor("#566C73");
         static String title = "Title Placeholder";
         static int titleColor = Color.parseColor("#ffffff");
-        static int labelColor = Color.parseColor("#ffffff");
-        static int labelBackground = R.drawable.label_frame;
+
     }
 
     public void setValues(List<Double> values) {

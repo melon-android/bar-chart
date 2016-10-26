@@ -5,20 +5,22 @@
         <attr name="scale_step" format="float"/>
         <attr name="absolute_scale_maximum" format="float"/>
         <attr name="minimum_scale_maximum" format="float"/>
-        <attr name="label_margin_bottom" format="dimension"/>
-        <attr name="label_format" format="string"/>
 
         <attr name="bar_accent_height" format="dimension"/>
         <attr name="bar_accent_color" format="color"/>
+        <attr name="bar_background" format="reference"/>
+        <attr name="highlighted_bar_background" format="reference"/>
 
         <attr name="grid_line_color" format="color"/>
         <attr name="grid_line_dashed_color" format="color" />
-        <attr name="bar_background" format="reference"/>
-        <attr name="highlighted_bar_background" format="reference"/>
-        <attr name="title" format="string"/>
-        <attr name="title_color" format="color" />
+
         <attr name="label_color" format="color" />
         <attr name="label_background" format="reference" />
+        <attr name="label_margin_bottom" format="dimension"/>
+        <attr name="label_format" format="string"/>
+
+        <attr name="title" format="string"/>
+        <attr name="title_color" format="color" />
 
     </declare-styleable>
 </resources>
