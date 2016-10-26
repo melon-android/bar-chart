@@ -46,8 +46,7 @@ public class MelonBarChart extends LinearLayout {
     private Parameters params;
     private List<Double> values = new ArrayList<>();
 
-    private double min, max;
-    private int minPos, maxPos;
+    private double maxValue;
     private double scaleMax;
     private int barWidth;
     private boolean initialized = false;
@@ -334,10 +333,10 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void getMinMax() {
-        min = Double.MAX_VALUE;
-        max = Double.MIN_VALUE;
-        minPos = -1;
-        maxPos = -1;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        int minPos = -1;
+        int maxPos = -1;
 
         double val;
         for (int i = 0; i < values.size(); i++) {
@@ -352,6 +351,8 @@ public class MelonBarChart extends LinearLayout {
             }
         }
 
+        maxValue = max;
+
         params.highlightedBars.add(minPos);
         params.highlightedBars.add(maxPos);
 
@@ -360,8 +361,7 @@ public class MelonBarChart extends LinearLayout {
     }
 
     private void calculateScale() {
-        scaleMax = params.scaleStep != 0 ? Util.ceil(max, params.scaleStep) : max * (1 +
-                DEFAULT_SCALE_PADDING);
+        scaleMax = params.scaleStep != 0 ? Util.ceil(maxValue, params.scaleStep) : maxValue * (1 + DEFAULT_SCALE_PADDING);
         if (params.absoluteScaleMax != 0 && scaleMax > params.absoluteScaleMax) {
             scaleMax = params.absoluteScaleMax;
         }

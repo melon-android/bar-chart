@@ -1,7 +1,6 @@
 package com.melontech.barchart.lib;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,7 +18,7 @@ import java.util.Set;
  * Created by dpanayotov on 10/11/2016
  */
 
-public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
+class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
     private int barWidth;
     private double scaleMax;
@@ -32,7 +31,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     private List<Double> values = new ArrayList<>();
     private Set<Integer> highlightedBars = new HashSet<>();
 
-    public BarAdapter(List<Double> values, int barWidth, double scaleMax) {
+    BarAdapter(List<Double> values, int barWidth, double scaleMax) {
         this.barWidth = barWidth;
         this.scaleMax = scaleMax;
 
@@ -41,7 +40,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         }
     }
 
-    public BarAdapter(int barWidth, double scaleMax) {
+    BarAdapter(int barWidth, double scaleMax) {
         this(null, barWidth, scaleMax);
     }
 
@@ -51,34 +50,34 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void setHighlightedBars(Set<Integer> highlightedBars) {
+    void setHighlightedBars(Set<Integer> highlightedBars) {
         this.highlightedBars.clear();
         this.highlightedBars.addAll(highlightedBars);
         notifyDataSetChanged();
     }
 
-    public void setScaleMax(double scaleMax) {
+    void setScaleMax(double scaleMax) {
         this.scaleMax = scaleMax;
         notifyDataSetChanged();
     }
 
-    public void setAccentColor(int color) {
+    void setAccentColor(int color) {
         accentColor = color;
         notifyDataSetChanged();
     }
 
-    public void setAccentHeight(int height) {
+    void setAccentHeight(int height) {
         Log.d("zxc", "hhhhhhhhhh: " + height);
         accentHeight = height;
         notifyDataSetChanged();
     }
 
-    public void setBarBackground(int background) {
+    void setBarBackground(int background) {
         barBackground = background;
         notifyDataSetChanged();
     }
 
-    public void setHighligtedBarBackground(int background) {
+    void setHighligtedBarBackground(int background) {
         highligtedBarBackground = background;
         notifyDataSetChanged();
     }
@@ -121,14 +120,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         return values.size();
     }
 
-    public class BarViewHolder extends RecyclerView.ViewHolder {
+    class BarViewHolder extends RecyclerView.ViewHolder {
 
         View bar;
         View accent;
         View positive;
         View negative;
 
-        public BarViewHolder(View itemView) {
+        BarViewHolder(View itemView) {
             super(itemView);
             bar = itemView.findViewById(R.id.bar);
             accent = itemView.findViewById(R.id.accent);
